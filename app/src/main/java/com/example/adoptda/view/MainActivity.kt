@@ -27,8 +27,8 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = "inicio") {
                         composable("inicio") { PantallaInicio(navController) }
                         composable("menu") { PantallaMenu(navController) }
-                        composable("perros") { Perros() }
-                        composable("gatos") { Gatos() }
+                        composable("perros") { PantallaPerros() }
+                        composable("gatos") { PantallaGatos() }
                     }
                 }
             }
