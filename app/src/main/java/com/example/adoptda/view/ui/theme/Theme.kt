@@ -1,4 +1,4 @@
-package com.example.adoptda.ui.theme
+package com.example.adoptda.view.ui.theme
 
 import android.app.Activity
 import android.os.Build
