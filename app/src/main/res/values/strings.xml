@@ -3,4 +3,6 @@
     <string name="comenzar">Ir a Adoptda</string>
     <string name="perros">Adoptar un perro</string>
     <string name="gatos">Adoptar un gato</string>
+    <string name="perrotitulo">PERROS</string>
+    <string name="gatotitulo">GATOS</string>
 </resources>
