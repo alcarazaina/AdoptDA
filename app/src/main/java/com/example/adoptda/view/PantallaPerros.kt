@@ -1,6 +1,7 @@
 package com.example.adoptda.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,13 +15,20 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,6 +40,7 @@ import androidx.navigation.NavController
 import com.example.adoptda.R
 import com.example.adoptda.model.Gato
 import com.example.adoptda.model.Perro
+import com.example.adoptda.view.ui.theme.Pink
 
 @Composable
 fun PantallaPerros(navController: NavController) {
@@ -48,15 +57,22 @@ fun PantallaPerros(navController: NavController) {
     Column(modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
-        Text(
-            text = stringResource(R.string.perrotitulo),
-            modifier = Modifier.padding(32.dp),
-            style = TextStyle(
-                fontSize = 60.sp,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight(weight = 500)
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, top = 50.dp, bottom = 16.dp)
+            .clip(RoundedCornerShape(30.dp))
+            .background(color = Pink),
+            contentAlignment = Alignment.Center) {
+            Text(
+                text = stringResource(R.string.perrotitulo),
+                modifier = Modifier.padding(32.dp),
+                style = TextStyle(
+                    fontSize = 60.sp,
+                    color = Color.White,
+                    fontWeight = FontWeight(weight = 500)
+                )
             )
-        )
+        }
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -69,6 +85,15 @@ fun PantallaPerros(navController: NavController) {
                 items(perros) { perros ->
                     PerroCard(perros)
                 }
+            }
+            Button(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier
+                    .padding(8.dp)
+                    .align(Alignment.BottomCenter),
+                colors = ButtonDefaults.buttonColors(Pink)
+            ) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Regresar", tint = Color.White)
             }
         }
     }

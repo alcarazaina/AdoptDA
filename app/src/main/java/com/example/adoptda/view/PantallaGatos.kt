@@ -1,6 +1,7 @@
 package com.example.adoptda.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -52,20 +54,25 @@ fun PantallaGatos(navController: NavController) {
         Gato(8, "Pompom", R.drawable.pompom)
 
     )
-    Column(
-        modifier = Modifier.fillMaxSize(),
+    Column(modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = stringResource(R.string.gatotitulo),
-            modifier = Modifier.padding(32.dp),
-            style = TextStyle(
-                fontSize = 60.sp,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight(weight = 500)
+        verticalArrangement = Arrangement.Center) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, top = 50.dp, bottom = 16.dp)
+            .clip(RoundedCornerShape(30.dp))
+            .background(color = Pink),
+            contentAlignment = Alignment.Center) {
+            Text(
+                text = stringResource(R.string.gatotitulo),
+                modifier = Modifier.padding(32.dp),
+                style = TextStyle(
+                    fontSize = 60.sp,
+                    color = Color.White,
+                    fontWeight = FontWeight(weight = 500)
+                )
             )
-        )
+        }
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
