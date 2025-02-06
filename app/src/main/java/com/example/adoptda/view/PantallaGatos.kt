@@ -79,6 +79,7 @@ fun PantallaGatos(navController: NavController) {
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
+                // borrar este comentario
                 items(GatoRepository.gatos) { gato ->
                     GatoCard(gato, navController)
                 }

@@ -25,6 +25,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    // borrar este comentario
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "inicio") {
                         composable("inicio") { PantallaInicio(navController) }

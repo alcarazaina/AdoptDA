@@ -3,6 +3,7 @@ package com.example.adoptda.model
 import com.example.adoptda.R
 
 object GatoRepository {
+    // borrar este comentario
     val gatos = listOf(
         Gato(1, "Simba", R.drawable.simba,1,"Chico","Gatete"),
         Gato(2, "Alaska", R.drawable.alaska,1,"Chico","Gatete"),

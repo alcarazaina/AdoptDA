@@ -71,6 +71,7 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
+                // borrar este comentario
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()

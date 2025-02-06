@@ -1,6 +1,7 @@
 package com.example.adoptda.model
 
 data class Gato(
+    // borrar este comentario
     val id: Int,
     val nombre: String,
     val imagen: Int,
