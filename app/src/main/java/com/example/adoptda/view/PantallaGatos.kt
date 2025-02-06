@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,9 +22,16 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +42,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -41,6 +50,7 @@ import com.example.adoptda.R
 import com.example.adoptda.model.Gato
 import com.example.adoptda.view.ui.theme.Pink
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PantallaGatos(navController: NavController) {
     val gatos = listOf(
@@ -54,49 +64,47 @@ fun PantallaGatos(navController: NavController) {
         Gato(8, "Pompom", R.drawable.pompom)
 
     )
-    Column(modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, top = 50.dp, bottom = 16.dp)
-            .clip(RoundedCornerShape(30.dp))
-            .background(color = Pink),
-            contentAlignment = Alignment.Center) {
-            Text(
-                text = stringResource(R.string.gatotitulo),
-                modifier = Modifier.padding(32.dp),
-                style = TextStyle(
-                    fontSize = 60.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight(weight = 500)
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.gatotitulo),
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+                },
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = Pink
                 )
             )
-        }
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
+        },
+        content = { paddingValues ->
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(8.dp),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
             ) {
-                items(gatos) { gatos ->
-                    GatoCard(gatos)
+                items(gatos) { gato ->
+                    GatoCard(gato)
                 }
             }
-            Button(
+        },
+        floatingActionButton = {
+            FloatingActionButton(
                 onClick = { navController.popBackStack() },
-                modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.BottomCenter),
-                colors = ButtonDefaults.buttonColors(Pink)
+                containerColor = Pink,
+                contentColor = Color.White,
             ) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Regresar", tint = Color.White)
+                Icon(Icons.Default.ArrowBack, contentDescription = "Regresar")
             }
-        }
-    }
+        },
+        floatingActionButtonPosition = FabPosition.Start
+    )
 }
 
 @Composable
