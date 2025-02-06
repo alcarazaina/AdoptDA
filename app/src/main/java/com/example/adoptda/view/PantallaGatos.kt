@@ -48,22 +48,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.adoptda.R
 import com.example.adoptda.model.Gato
+import com.example.adoptda.model.GatoRepository
 import com.example.adoptda.view.ui.theme.Pink
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PantallaGatos(navController: NavController) {
-    val gatos = listOf(
-        Gato(1, "Simba", R.drawable.simba),
-        Gato(2, "Alaska", R.drawable.alaska),
-        Gato(3, "Greta", R.drawable.greta),
-        Gato(4, "Lana", R.drawable.lana),
-        Gato(5, "Lola y Lolitos", R.drawable.lolaylolitos),
-        Gato(6, "Lucifer", R.drawable.lucifer),
-        Gato(7, "Miel", R.drawable.miel),
-        Gato(8, "Pompom", R.drawable.pompom)
-
-    )
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -89,8 +79,8 @@ fun PantallaGatos(navController: NavController) {
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                items(gatos) { gato ->
-                    GatoCard(gato)
+                items(GatoRepository.gatos) { gato ->
+                    GatoCard(gato, navController)
                 }
             }
         },
@@ -108,11 +98,11 @@ fun PantallaGatos(navController: NavController) {
 }
 
 @Composable
-fun GatoCard(gato: Gato) {
+fun GatoCard(gato: Gato, navController: NavController) {
     Card(
         modifier = Modifier
             .padding(8.dp)
-            .clickable {/*aqui ira la alerta de adopcion*/ },
+            .clickable { navController.navigate("adoptaGato/${gato.id}") },
         shape = RoundedCornerShape(30.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 20.dp)
         )

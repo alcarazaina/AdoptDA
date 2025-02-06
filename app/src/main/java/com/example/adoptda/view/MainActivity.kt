@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.adoptda.view.ui.theme.AdoptDATheme
 
 class MainActivity : ComponentActivity() {
@@ -29,6 +31,13 @@ class MainActivity : ComponentActivity() {
                         composable("menu") { PantallaMenu(navController) }
                         composable("perros") { PantallaPerros(navController) }
                         composable("gatos") { PantallaGatos(navController) }
+                        composable(
+                            "adoptaGato/{gatoId}",
+                            arguments = listOf(navArgument("gatoId") { type = NavType.IntType })
+                        ) { backStackEntry ->
+                            val gatoId = backStackEntry.arguments?.getInt("gatoId") ?: 0
+                            PantallaAdopcionGato(navController, gatoId)
+                        }
                     }
                 }
             }
