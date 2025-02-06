@@ -5,4 +5,6 @@
     <string name="gatos">Adoptar un gato</string>
     <string name="perrotitulo">PERROS</string>
     <string name="gatotitulo">GATOS</string>
+    <string name="queadoptas">¿Qué quieres adoptar?</string>
+    <string name="textobottom">Adoptar salva vidas</string>
 </resources>
