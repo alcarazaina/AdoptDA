@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
@@ -85,7 +87,7 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
                     )
                 ) {
                     Column(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(16.dp).verticalScroll(rememberScrollState()),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
@@ -106,6 +108,13 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
                         Text(
                             text = gato.sexo,
                             fontSize = 24.sp,
+                            color = Color.White,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = gato.provincia,
+                            fontSize = 18.sp,
                             color = Color.White,
                             textAlign = TextAlign.Center
                         )

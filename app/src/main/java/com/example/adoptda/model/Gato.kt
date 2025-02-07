@@ -7,5 +7,6 @@ data class Gato(
     val imagen: Int,
     val edad: Int,
     val sexo: String,
-    val descripcion: String
+    val descripcion: String,
+    val provincia: String
 )
