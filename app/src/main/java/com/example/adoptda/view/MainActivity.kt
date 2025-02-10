@@ -39,6 +39,13 @@ class MainActivity : ComponentActivity() {
                             val gatoId = backStackEntry.arguments?.getInt("gatoId") ?: 0
                             PantallaAdopcionGato(navController, gatoId)
                         }
+                        composable(
+                            "adoptaPerro/{perroId}",
+                            arguments = listOf(navArgument("perroId") { type = NavType.IntType })
+                        ) { backStackEntry ->
+                            val perroId = backStackEntry.arguments?.getInt("perroId") ?: 0
+                            PantallaAdopcionPerro(navController, perroId)
+                        }
                     }
                 }
             }

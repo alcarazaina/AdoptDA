@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,9 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -32,10 +29,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,14 +43,15 @@ import androidx.navigation.NavController
 import com.example.adoptda.R
 import com.example.adoptda.model.Gato
 import com.example.adoptda.model.GatoRepository
+import com.example.adoptda.model.PerroRepository
 import com.example.adoptda.view.ui.theme.Pink
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
+fun PantallaAdopcionPerro(navController: NavController, perroId: Int) {
 
-    val gato = GatoRepository.getGatoById(gatoId) ?: return
+    val perro = PerroRepository.getPerroById(perroId) ?: return
 
     Scaffold(
         topBar = {
@@ -65,13 +59,12 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(300.dp)
-                    .padding(top = 10.dp)
             ) {
                 Image(
-                    painter = painterResource(id = gato.imagen),
-                    contentDescription = gato.nombre,
+                    painter = painterResource(id = perro.imagen),
+                    contentDescription = perro.nombre,
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.None
+                    contentScale = ContentScale.Fit
                 )
             }
         },
@@ -99,7 +92,7 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = gato.nombre,
+                            text = perro.nombre,
                             fontSize = 30.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
@@ -107,28 +100,28 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "${gato.edad} años",
+                            text = "${perro.edad} años",
                             fontSize = 24.sp,
                             color = Color.White,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = gato.sexo,
+                            text = perro.sexo,
                             fontSize = 24.sp,
                             color = Color.White,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = gato.provincia,
+                            text = perro.provincia,
                             fontSize = 18.sp,
                             color = Color.White,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = gato.descripcion,
+                            text = perro.descripcion,
                             fontSize = 18.sp,
                             color = Color.White,
                             textAlign = TextAlign.Center
@@ -138,23 +131,14 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
             }
         },
         floatingActionButton = {
-            Row(modifier = Modifier.fillMaxWidth().padding(start = 32.dp),
-                horizontalArrangement = Arrangement.SpaceBetween) {
-                FloatingActionButton(
-                    onClick = { navController.popBackStack() },
-                    containerColor = Pink,
-                    contentColor = Color.White,
-                ) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Regresar")
-                }
-                FloatingActionButton(
-                    onClick = {  },
-                    containerColor = Pink,
-                    contentColor = Color.White,
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = "Regresar")
-                }
+            FloatingActionButton(
+                onClick = { navController.popBackStack() },
+                containerColor = Pink,
+                contentColor = Color.White,
+            ) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Regresar")
             }
         },
+        floatingActionButtonPosition = FabPosition.Start
     )
 }

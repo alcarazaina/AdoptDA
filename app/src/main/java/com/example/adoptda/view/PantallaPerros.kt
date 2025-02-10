@@ -47,21 +47,12 @@ import androidx.navigation.NavController
 import com.example.adoptda.R
 import com.example.adoptda.model.Gato
 import com.example.adoptda.model.Perro
+import com.example.adoptda.model.PerroRepository
 import com.example.adoptda.view.ui.theme.Pink
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PantallaPerros(navController: NavController) {
-    val perros = listOf(
-        Perro(1, "Duquesa", R.drawable.duquesa),
-        Perro(2, "Golfo", R.drawable.golfo),
-        Perro(3, "Gordon", R.drawable.gordon),
-        Perro(4, "Kiko", R.drawable.kiko),
-        Perro(5, "Laika", R.drawable.laika),
-        Perro(6, "Nano", R.drawable.nano),
-        Perro(7, "Pipo", R.drawable.pipo),
-        Perro(8, "Toby", R.drawable.tobi),
-    )
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -87,8 +78,8 @@ fun PantallaPerros(navController: NavController) {
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                items(perros) { perro ->
-                    PerroCard(perro)
+                items(PerroRepository.perros) { perro ->
+                    PerroCard(perro, navController)
                 }
             }
         },
@@ -106,11 +97,11 @@ fun PantallaPerros(navController: NavController) {
 }
 
 @Composable
-fun PerroCard(perro: Perro) {
+fun PerroCard(perro: Perro, navController: NavController) {
     Card(
         modifier = Modifier
             .padding(8.dp)
-            .clickable {/*aqui ira la alerta de adopcion*/ },
+            .clickable { navController.navigate("adoptaPerro/${perro.id}") },
         shape = RoundedCornerShape(30.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 20.dp)
     )
