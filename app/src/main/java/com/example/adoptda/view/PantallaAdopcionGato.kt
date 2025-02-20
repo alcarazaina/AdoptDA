@@ -21,6 +21,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -29,6 +31,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,10 +45,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.adoptda.R
 import com.example.adoptda.model.Gato
@@ -58,6 +63,7 @@ import com.example.adoptda.view.ui.theme.Pink
 fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
 
     val gato = GatoRepository.getGatoById(gatoId) ?: return
+    var mostrarDialogoConfirmacion by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -81,7 +87,6 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                // borrar este comentario
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -135,6 +140,39 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
                         )
                     }
                 }
+                if (mostrarDialogoConfirmacion) {
+                    AlertDialog(
+                        onDismissRequest = { mostrarDialogoConfirmacion = false },
+                        title = { Text("confirm_deletion") },
+                        text = { Text("confirm_delete_profile") },
+                        confirmButton = {
+                            Button(
+                                onClick = { navController.navigate("cuestionario") },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                            ) {
+                                Text(
+                                    text = "Ir al cuestionario",
+                                    style = TextStyle(color = Color.White)
+                                )
+                            }
+                        },
+                        dismissButton = {
+                            Button(colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF005665)),
+                                onClick = {
+                                    mostrarDialogoConfirmacion = false
+                                }
+                            ) {
+                                Text(
+                                    text = "cancel",
+                                    style = TextStyle(color = Color.White)
+                                )
+                            }
+                        },
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        properties = DialogProperties(dismissOnClickOutside = false),
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
             }
         },
         floatingActionButton = {
@@ -148,7 +186,7 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
                     Icon(Icons.Default.ArrowBack, contentDescription = "Regresar")
                 }
                 FloatingActionButton(
-                    onClick = {  },
+                    onClick = { mostrarDialogoConfirmacion = true },
                     containerColor = Pink,
                     contentColor = Color.White,
                 ) {

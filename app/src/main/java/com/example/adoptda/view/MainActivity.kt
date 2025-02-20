@@ -46,6 +46,7 @@ class MainActivity : ComponentActivity() {
                             val perroId = backStackEntry.arguments?.getInt("perroId") ?: 0
                             PantallaAdopcionPerro(navController, perroId)
                         }
+                        composable("cuestionario") { PantallaCuestionario(navController) }
                     }
                 }
             }
