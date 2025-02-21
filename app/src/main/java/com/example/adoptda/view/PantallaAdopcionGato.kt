@@ -55,12 +55,13 @@ import androidx.navigation.NavController
 import com.example.adoptda.R
 import com.example.adoptda.model.Gato
 import com.example.adoptda.model.GatoRepository
+import com.example.adoptda.model.Usuario
 import com.example.adoptda.view.ui.theme.Pink
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
+fun PantallaAdopcionGato(navController: NavController, gatoId: Int,usuarioId: Usuario) {
 
     val gato = GatoRepository.getGatoById(gatoId) ?: return
     var mostrarDialogoConfirmacion by remember { mutableStateOf(false) }
@@ -147,7 +148,7 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
                         text = { Text("confirm_delete_profile") },
                         confirmButton = {
                             Button(
-                                onClick = { navController.navigate("cuestionario") },
+                                onClick = { navController.navigate("cuestionario/${usuarioId}") },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                             ) {
                                 Text(

@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.adoptda.model.Usuario
 import com.example.adoptda.view.ui.theme.AdoptDATheme
 
 class MainActivity : ComponentActivity() {
@@ -37,7 +38,20 @@ class MainActivity : ComponentActivity() {
                             arguments = listOf(navArgument("gatoId") { type = NavType.IntType })
                         ) { backStackEntry ->
                             val gatoId = backStackEntry.arguments?.getInt("gatoId") ?: 0
-                            PantallaAdopcionGato(navController, gatoId)
+                            val dummyUsuario = Usuario(
+                                idUsuario = 0,
+                                nombre = "",
+                                apellido = "",
+                                dni = "",
+                                correo = "",
+                                masAnimales = false,
+                                experienciaPrevia = false,
+                                tiempoEnCasa = 0,
+                                gastosVeterinario = false,
+                                tiempoCalidad = false,
+                                pisoOCasa = false
+                            )
+                            PantallaAdopcionGato(navController, gatoId, dummyUsuario)
                         }
                         composable(
                             "adoptaPerro/{perroId}",
@@ -46,7 +60,26 @@ class MainActivity : ComponentActivity() {
                             val perroId = backStackEntry.arguments?.getInt("perroId") ?: 0
                             PantallaAdopcionPerro(navController, perroId)
                         }
-                        composable("cuestionario") { PantallaCuestionario(navController) }
+                        composable("cuestionario/{usuarioId}") { backStackEntry ->
+                            val usuarioId =
+                                backStackEntry.arguments?.getString("usuarioId")?.toIntOrNull() ?: 0
+                            // Here you would typically fetch the Usuario object based on the ID
+                            // For this example, we'll create a dummy Usuario object
+                            val dummyUsuario = Usuario(
+                                idUsuario = usuarioId,
+                                nombre = "",
+                                apellido = "",
+                                dni = "",
+                                correo = "",
+                                masAnimales = false,
+                                experienciaPrevia = false,
+                                tiempoEnCasa = 0,
+                                gastosVeterinario = false,
+                                tiempoCalidad = false,
+                                pisoOCasa = false
+                            )
+                            PantallaCuestionario(navController, dummyUsuario)
+                        }
                     }
                 }
             }
