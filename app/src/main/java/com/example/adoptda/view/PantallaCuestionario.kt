@@ -1,5 +1,6 @@
 package com.example.adoptda.view
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,10 +32,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.adoptda.R
 import com.example.adoptda.model.PreguntaBoolean
 import com.example.adoptda.model.PreguntaTextField
 import com.example.adoptda.model.PreguntaTiempo
@@ -54,53 +58,88 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
     var tiempoCalidad by remember { mutableStateOf(usuario.tiempoCalidad) }
     var pisoOCasa by remember { mutableStateOf(usuario.pisoOCasa) }
 
+    val backgroundImage = ImageBitmap.imageResource(id = R.drawable.fondo)
 
-    Scaffold(
-        topBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-            ) {
-                Text(
-                    text = "Cuestionario",
-                    textAlign = TextAlign.Center,
-                )
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Background
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val imageWidth = backgroundImage.width.toFloat()
+            val imageHeight = backgroundImage.height.toFloat()
+
+            for (x in 0..(size.width / imageWidth).toInt()) {
+                for (y in 0..(size.height / imageHeight).toInt()) {
+                    drawImage(
+                        image = backgroundImage,
+                        topLeft = androidx.compose.ui.geometry.Offset(
+                            x * imageWidth,
+                            y * imageHeight
+                        )
+                    )
+                }
             }
-        },
-        content = { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                Column(
+        }
+        Scaffold(
+            topBar = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp)
+                ) {
+                    Text(
+                        text = "Cuestionario",
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            },
+            content = { paddingValues ->
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                        .padding(paddingValues)
                 ) {
-
-                        PreguntaTextField("Introduce tu nombre",nombre) { nombre = it }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        PreguntaTextField("Introduce tu nombre", nombre) { nombre = it }
                         Spacer(modifier = Modifier.height(8.dp))
-                        PreguntaTextField("Introduce tu apellido",apellido) { apellido = it }
+                        PreguntaTextField("Introduce tu apellido", apellido) { apellido = it }
                         Spacer(modifier = Modifier.height(8.dp))
-                        PreguntaTextField("Introduce tu DNI",dni) { dni = it }
+                        PreguntaTextField("Introduce tu DNI", dni) { dni = it }
                         Spacer(modifier = Modifier.height(8.dp))
-                        PreguntaTextField("Introduce tu correo electronico",correo) { correo = it }
+                        PreguntaTextField("Introduce tu correo electronico", correo) { correo = it }
                         Spacer(modifier = Modifier.height(8.dp))
-                        PreguntaTiempo("¿Cuánto tiempo pasa en casa?", tiempoEnCasa) { tiempoEnCasa = it }
+                        PreguntaTiempo(
+                            "¿Cuánto tiempo pasa en casa?",
+                            tiempoEnCasa
+                        ) { tiempoEnCasa = it }
                         Spacer(modifier = Modifier.height(8.dp))
-                        PreguntaBoolean("¿Tiene más mascotas?", tieneMasAnimales) { tieneMasAnimales = it }
+                        PreguntaBoolean(
+                            "¿Tiene más mascotas?",
+                            tieneMasAnimales
+                        ) { tieneMasAnimales = it }
                         Spacer(modifier = Modifier.height(8.dp))
-                        PreguntaBoolean("¿Ha tenido mascotas antes?", haTenidoMasAnimales) { haTenidoMasAnimales = it }
+                        PreguntaBoolean(
+                            "¿Ha tenido mascotas antes?",
+                            haTenidoMasAnimales
+                        ) { haTenidoMasAnimales = it }
                         Spacer(modifier = Modifier.height(8.dp))
-                        PreguntaBoolean("¿Está dispuesto a asumir los gastos veterinarios?", asumeGastosVeterinarios) { asumeGastosVeterinarios = it }
+                        PreguntaBoolean(
+                            "¿Está dispuesto a asumir los gastos veterinarios?",
+                            asumeGastosVeterinarios
+                        ) { asumeGastosVeterinarios = it }
                         Spacer(modifier = Modifier.height(8.dp))
-                        PreguntaBoolean("¿Tiene tiempo para paseos y juegos?", tiempoCalidad) { tiempoCalidad = it }
+                        PreguntaBoolean(
+                            "¿Tiene tiempo para paseos y juegos?",
+                            tiempoCalidad
+                        ) { tiempoCalidad = it }
                         Spacer(modifier = Modifier.height(8.dp))
-                        PreguntaBoolean("¿Vive en casa o apartamento?", pisoOCasa) { pisoOCasa = it }
+                        PreguntaBoolean("¿Vive en casa o apartamento?", pisoOCasa) {
+                            pisoOCasa = it
+                        }
                         Spacer(modifier = Modifier.height(8.dp))
                         Button(
                             onClick = {
@@ -126,22 +165,23 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
                                 .fillMaxWidth(0.8f),
                             colors = ButtonDefaults.buttonColors(Pink)
                         ) {
-                          Text("Confirmar") // de todos los Text, te encargas tu de poner los stringResource
+                            Text("Confirmar") // de todos los Text, te encargas tu de poner los stringResource
                         }
                     }
                 }
 
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navController.popBackStack() },
-                containerColor = Pink,
-                contentColor = Color.White,
-            ) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Regresar")
-            }
-        },
-        floatingActionButtonPosition = FabPosition.Start
-    )
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { navController.popBackStack() },
+                    containerColor = Pink,
+                    contentColor = Color.White,
+                ) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Regresar")
+                }
+            },
+            floatingActionButtonPosition = FabPosition.Start
+        )
+    }
 }
 

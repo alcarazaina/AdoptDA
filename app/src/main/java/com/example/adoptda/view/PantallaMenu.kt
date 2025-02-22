@@ -105,6 +105,18 @@ fun PantallaMenu(navController: NavController) {
                         style = TextStyle(Color.White)
                     )
                 }
+                Button(
+                    onClick = { navController.navigate("perfilesUsuario") },
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(0.8f),
+                    colors = ButtonDefaults.buttonColors(Pink)
+                ) {
+                    Text(
+                        "Perfiles de usuario",
+                        style = TextStyle(Color.White)
+                    )
+                }
             }
         }
     }

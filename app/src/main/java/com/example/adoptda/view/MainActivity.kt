@@ -80,6 +80,7 @@ class MainActivity : ComponentActivity() {
                             )
                             PantallaCuestionario(navController, dummyUsuario)
                         }
+                        composable("perfilesUsuario") { PerfilesUsuario(navController) }
                     }
                 }
             }
