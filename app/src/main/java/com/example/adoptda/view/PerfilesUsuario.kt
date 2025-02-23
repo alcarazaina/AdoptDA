@@ -75,7 +75,7 @@ fun PerfilesUsuario(navController: NavController) {
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
-                            text = "Usuarios",
+                            stringResource(R.string.usuario),
                             fontSize = 30.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,

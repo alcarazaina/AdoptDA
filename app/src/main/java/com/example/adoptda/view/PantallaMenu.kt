@@ -113,7 +113,7 @@ fun PantallaMenu(navController: NavController) {
                     colors = ButtonDefaults.buttonColors(Pink)
                 ) {
                     Text(
-                        "Perfiles de usuario",
+                        stringResource(R.string.perfilesUs),
                         style = TextStyle(Color.White)
                     )
                 }

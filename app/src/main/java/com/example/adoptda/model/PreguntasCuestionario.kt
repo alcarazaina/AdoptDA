@@ -30,10 +30,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.adoptda.R
+import com.example.adoptda.view.ui.theme.Pink
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,9 +52,9 @@ fun PreguntaTextField(enunciado: String, nombre: String, onNombreChange: (String
                 isError = nombre.isEmpty(),
                 textStyle = TextStyle(color = Color.Black),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color.Black,
-                    unfocusedBorderColor = Color.DarkGray,
-                    cursorColor = Color.Black
+                    focusedBorderColor = Pink,
+                    unfocusedBorderColor = Pink,
+                    cursorColor = Pink
                 )
             )
     }
@@ -73,7 +76,7 @@ fun PreguntaBoolean(enunciado: String, value: Boolean, onValueChange: (Boolean) 
                     text = enunciado,
                     style = TextStyle(
                         fontSize = 20.sp,
-                        color = Color(0xFF005665)
+                        color = Pink
 
                     ),
                     modifier = Modifier
@@ -89,11 +92,11 @@ fun PreguntaBoolean(enunciado: String, value: Boolean, onValueChange: (Boolean) 
                     Button(
                         onClick = { onValueChange(true) },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (value) Color(0xFF005665) else Color.White
+                            containerColor = if (value) Pink else Color.White
                         )
                     ) {
                         Text(
-                            "yes",
+                            stringResource(R.string.si),
                             color = if (value) Color.White else Color.Black,
                             style = TextStyle(color = Color.Black)
                         )
@@ -102,11 +105,11 @@ fun PreguntaBoolean(enunciado: String, value: Boolean, onValueChange: (Boolean) 
                     Button(
                         onClick = { onValueChange(false) },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (!value) Color(0xFF005665) else Color.White
+                            containerColor = if (!value) Pink else Color.White
                         )
                     ) {
                         Text(
-                            "no",
+                            stringResource(R.string.no),
                             color = if (!value) Color.White else Color.Black,
                             style = TextStyle(color = Color.Black)
                         )
@@ -136,7 +139,12 @@ fun PreguntaTiempo(enunciado: String, seleccionHora: String, onHoraSelected: (St
                 onValueChange = {},
                 label = { Text("Seleccionar horas") },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.menuAnchor()
+                modifier = Modifier.menuAnchor(),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Pink,
+                unfocusedBorderColor = Pink,
+                cursorColor = Pink
+            )
             )
             ExposedDropdownMenu(
                 expanded = expanded,

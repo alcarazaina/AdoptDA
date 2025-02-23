@@ -26,7 +26,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // borrar este comentario
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "inicio") {
                         composable("inicio") { PantallaInicio(navController) }
@@ -58,7 +57,20 @@ class MainActivity : ComponentActivity() {
                             arguments = listOf(navArgument("perroId") { type = NavType.IntType })
                         ) { backStackEntry ->
                             val perroId = backStackEntry.arguments?.getInt("perroId") ?: 0
-                            PantallaAdopcionPerro(navController, perroId)
+                            val dummyUsuario = Usuario(
+                                idUsuario = 0,
+                                nombre = "",
+                                apellido = "",
+                                dni = "",
+                                correo = "",
+                                masAnimales = false,
+                                experienciaPrevia = false,
+                                tiempoEnCasa = 0,
+                                gastosVeterinario = false,
+                                tiempoCalidad = false,
+                                pisoOCasa = false
+                            )
+                            PantallaAdopcionPerro(navController, perroId, dummyUsuario)
                         }
                         composable("cuestionario/{usuarioId}") { backStackEntry ->
                             val usuarioId =

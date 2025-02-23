@@ -144,27 +144,26 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int,usuarioId: Us
                 if (mostrarDialogoConfirmacion) {
                     AlertDialog(
                         onDismissRequest = { mostrarDialogoConfirmacion = false },
-                        title = { Text("confirm_deletion") },
-                        text = { Text("confirm_delete_profile") },
+                        title = { Text(stringResource(R.string.iralcuestionario)) },
                         confirmButton = {
                             Button(
                                 onClick = { navController.navigate("cuestionario/${usuarioId}") },
-                                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                                colors = ButtonDefaults.buttonColors(containerColor = Pink)
                             ) {
                                 Text(
-                                    text = "Ir al cuestionario",
+                                    stringResource(R.string.aceptar),
                                     style = TextStyle(color = Color.White)
                                 )
                             }
                         },
                         dismissButton = {
-                            Button(colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF005665)),
+                            Button(colors = ButtonDefaults.buttonColors(containerColor = Pink),
                                 onClick = {
                                     mostrarDialogoConfirmacion = false
                                 }
                             ) {
                                 Text(
-                                    text = "cancel",
+                                    stringResource(R.string.cancelar),
                                     style = TextStyle(color = Color.White)
                                 )
                             }

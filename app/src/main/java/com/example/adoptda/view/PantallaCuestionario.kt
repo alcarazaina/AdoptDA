@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -86,7 +87,7 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
                         .height(100.dp)
                 ) {
                     Text(
-                        text = "Cuestionario",
+                        stringResource(R.string.cuestionario),
                         textAlign = TextAlign.Center,
                     )
                 }
@@ -155,8 +156,6 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
                                     tiempoCalidad = tiempoCalidad,
                                     pisoOCasa = pisoOCasa
                                 )
-                                // Here you would typically save the updated Usuario to your data source
-                                // For now, we'll just print it to the console
                                 println("Updated Usuario: $updatedUsuario")
                                 navController.popBackStack()
                             },
@@ -165,7 +164,7 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
                                 .fillMaxWidth(0.8f),
                             colors = ButtonDefaults.buttonColors(Pink)
                         ) {
-                            Text("Confirmar") // de todos los Text, te encargas tu de poner los stringResource
+                            Text(stringResource(R.string.aceptar))
                         }
                     }
                 }

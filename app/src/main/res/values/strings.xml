@@ -7,4 +7,12 @@
     <string name="gatotitulo">GATOS</string>
     <string name="queadoptas">¿Qué quieres adoptar?</string>
     <string name="textobottom">Adoptar salva vidas</string>
+    <string name="iralcuestionario">¿Desea rellenar los datos para la adopción de esta mascota?</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="cuestionario">Cuestionario</string>
+    <string name="perfilesUs">Perfiles de usuario</string>
+    <string name="usuario">Usuario</string>
+    <string name="si">Sí</string>
+    <string name="no">No</string>
 </resources>
