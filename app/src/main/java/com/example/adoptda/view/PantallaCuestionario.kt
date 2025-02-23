@@ -2,49 +2,31 @@ package com.example.adoptda.view
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.adoptda.R
-import com.example.adoptda.model.PreguntaBoolean
-import com.example.adoptda.model.PreguntaTextField
-import com.example.adoptda.model.PreguntaTiempo
-import com.example.adoptda.model.Usuario
+import com.example.adoptda.model.*
 import com.example.adoptda.view.ui.theme.Pink
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import android.widget.Toast
 
 @Composable
 fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
@@ -58,6 +40,11 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
     var asumeGastosVeterinarios by remember { mutableStateOf(usuario.gastosVeterinario) }
     var tiempoCalidad by remember { mutableStateOf(usuario.tiempoCalidad) }
     var pisoOCasa by remember { mutableStateOf(usuario.pisoOCasa) }
+
+    var isSubmitting by remember { mutableStateOf(false) }
+    var progress by remember { mutableStateOf(0f) }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val backgroundImage = ImageBitmap.imageResource(id = R.drawable.fondo)
 
@@ -144,6 +131,7 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
                         Spacer(modifier = Modifier.height(8.dp))
                         Button(
                             onClick = {
+                                isSubmitting = true
                                 val updatedUsuario = usuario.copy(
                                     nombre = nombre,
                                     apellido = apellido,
@@ -157,18 +145,24 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
                                     pisoOCasa = pisoOCasa
                                 )
                                 println("Updated Usuario: $updatedUsuario")
-                                navController.popBackStack()
+                                scope.launch {
+                                    delay(3000)
+                                    isSubmitting = false
+                                    Toast.makeText(context, "Respuestas recibidas. En breve le comunicaremos nuestra decisión.", Toast.LENGTH_LONG).show()
+                                    delay(2000)
+                                    navController.popBackStack()
+                                }
                             },
                             modifier = Modifier
                                 .padding(8.dp)
                                 .fillMaxWidth(0.8f),
-                            colors = ButtonDefaults.buttonColors(Pink)
+                            colors = ButtonDefaults.buttonColors(Pink),
+                            enabled = !isSubmitting
                         ) {
                             Text(stringResource(R.string.aceptar))
                         }
                     }
                 }
-
             },
             floatingActionButton = {
                 FloatingActionButton(
@@ -181,6 +175,45 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
             },
             floatingActionButtonPosition = FabPosition.Start
         )
+
+        if (isSubmitting) {
+            Dialog(onDismissRequest = {}) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    shape = RoundedCornerShape(16.dp),
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            stringResource(R.string.recibiendo),
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                        LinearProgressIndicator(
+                            progress = progress,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(8.dp),
+                            color = Pink
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(isSubmitting) {
+        if (isSubmitting) {
+            progress = 0f
+            while (progress < 1f) {
+                delay(30)
+                progress += 0.01f
+            }
+        }
     }
 }
-
