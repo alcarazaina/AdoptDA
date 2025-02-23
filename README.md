@@ -9,6 +9,10 @@ Este es un proyecto para gestionar adopciones de perros y gatos, permitiendo a l
 - Gestión de usuarios y sus perfiles. (por añadir)
 - Base de datos para almacenar información relevante. (por añadir)
 
+## 👩🏼‍💻 Integrantes
+- Ainara (@alcarazaina)
+- Juan Daniel (@juanda1612)
+
 ## 📜 Historial de Commits y Contribuciones
 A continuación, se detallan los cambios realizados en el proyecto junto con las contribuciones de cada persona:
 
