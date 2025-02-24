@@ -1,7 +1,6 @@
 package com.example.adoptda.view
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,7 +26,10 @@ import com.example.adoptda.view.ui.theme.Pink
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import android.widget.Toast
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
     var nombre by remember { mutableStateOf(usuario.nombre) }
@@ -41,12 +43,19 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
     var tiempoCalidad by remember { mutableStateOf(usuario.tiempoCalidad) }
     var pisoOCasa by remember { mutableStateOf(usuario.pisoOCasa) }
 
+    var isNombreValid by remember { mutableStateOf(false) }
+    var isApellidoValid by remember { mutableStateOf(false) }
+    var isDniValid by remember { mutableStateOf(false) }
+    var isCorreoValid by remember { mutableStateOf(false) }
+
     var isSubmitting by remember { mutableStateOf(false) }
     var progress by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
     val backgroundImage = ImageBitmap.imageResource(id = R.drawable.fondo)
+
+    val isFormValid = isNombreValid && isApellidoValid && isDniValid && isCorreoValid
 
     Box(modifier = Modifier.fillMaxSize()) {
         // Background
@@ -68,16 +77,20 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
         }
         Scaffold(
             topBar = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp)
-                ) {
-                    Text(
-                        stringResource(R.string.cuestionario),
-                        textAlign = TextAlign.Center,
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = stringResource(R.string.cuestionario),
+                            fontSize = 30.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            textAlign = TextAlign.Center
+                        )
+                    },
+                    colors = TopAppBarDefaults.smallTopAppBarColors(
+                        containerColor = Pink
                     )
-                }
+                )
             },
             content = { paddingValues ->
                 Box(
@@ -92,18 +105,39 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        PreguntaTextField("Introduce tu nombre", nombre) { nombre = it }
+                        PreguntaTextField(
+                            "Introduce tu nombre",
+                            nombre,
+                            onNombreChange = { nombre = it },
+                            onValidationChange = { isNombreValid = it }
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
-                        PreguntaTextField("Introduce tu apellido", apellido) { apellido = it }
+                        PreguntaTextField(
+                            "Introduce tu apellido",
+                            apellido,
+                            onNombreChange = { apellido = it },
+                            onValidationChange = { isApellidoValid = it }
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
-                        PreguntaTextField("Introduce tu DNI", dni) { dni = it }
+                        PreguntaTextField(
+                            "Introduce tu DNI",
+                            dni,
+                            onNombreChange = { dni = it },
+                            onValidationChange = { isDniValid = it }
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
-                        PreguntaTextField("Introduce tu correo electronico", correo) { correo = it }
+                        PreguntaTextField(
+                            "Introduce tu correo electronico",
+                            correo,
+                            onNombreChange = { correo = it },
+                            onValidationChange = { isCorreoValid = it }
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
                         PreguntaTiempo(
                             "¿Cuánto tiempo pasa en casa?",
-                            tiempoEnCasa
-                        ) { tiempoEnCasa = it }
+                            tiempoEnCasa,
+                            onHoraSelected = { tiempoEnCasa = it },
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
                         PreguntaBoolean(
                             "¿Tiene más mascotas?",
@@ -157,7 +191,7 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
                                 .padding(8.dp)
                                 .fillMaxWidth(0.8f),
                             colors = ButtonDefaults.buttonColors(Pink),
-                            enabled = !isSubmitting
+                            enabled = isFormValid && !isSubmitting
                         ) {
                             Text(stringResource(R.string.aceptar))
                         }
@@ -173,7 +207,8 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
                     Icon(Icons.Default.ArrowBack, contentDescription = "Regresar")
                 }
             },
-            floatingActionButtonPosition = FabPosition.Start
+            floatingActionButtonPosition = FabPosition.Start,
+            containerColor = Color.Transparent
         )
 
         if (isSubmitting) {

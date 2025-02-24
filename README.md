@@ -16,9 +16,14 @@ Este es un proyecto para gestionar adopciones de perros y gatos, permitiendo a l
 ## 📜 Historial de Commits y Contribuciones
 A continuación, se detallan los cambios realizados en el proyecto junto con las contribuciones de cada persona:
 
+### 📅 24 de Febrero de 2025
+```md
+- **@juanda1612**: Se completó todo el desarrollo pendiente de la primera entrega.
+```
+
 ### 📅 23 de Febrero de 2025
 ```md
-- **@alcarazaina**: Se completó todo el desarrollo pendiente, incluyendo ajustes en los recursos de strings, cambio de colores de botones y funcionalidad del cuestionario en la pantalla de perros.
+- **@alcarazaina**: Se incluyó ajustes en los recursos de strings, cambió de colores de botones y funcionalidad del cuestionario en la pantalla de perros.
 ```
 
 ### 📅 22 de Febrero de 2025

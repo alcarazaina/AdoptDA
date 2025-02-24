@@ -18,11 +18,13 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,23 +42,78 @@ import com.example.adoptda.view.ui.theme.Pink
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PreguntaTextField(enunciado: String, nombre: String, onNombreChange: (String) -> Unit) {
+fun PreguntaTextField(
+    enunciado: String,
+    nombre: String,
+    onNombreChange: (String) -> Unit,
+    onValidationChange: (Boolean) -> Unit
+) {
+    val pattern = when {
+        enunciado.contains("DNI", ignoreCase = true) -> Regex("^\\d{8}[A-Za-z]$")
+        enunciado.contains("correo", ignoreCase = true) -> Regex("^[^@]+@[^@]+\\.[^@]+$")
+        else -> Regex("^[^0-9]+$")
+    }
+
+    val isValid = nombre.matches(pattern)
+    val isDni = enunciado.contains("DNI", ignoreCase = true)
+    val isCorreo = enunciado.contains("correo", ignoreCase = true)
+
+    LaunchedEffect(nombre) {
+        onValidationChange(isValid)
+    }
+
     Column {
-            OutlinedTextField(
-                value = nombre,
-                onValueChange = onNombreChange,
-                label = {
-                    Text(enunciado,
+        OutlinedTextField(
+            value = nombre,
+            onValueChange = { newValue ->
+                when {
+                    isDni -> {
+                        val dniNumbers = newValue.take(8).filter { it.isDigit() }
+                        val dniLetter = newValue.drop(8).take(1).filter { it.isLetter() }
+                        val newDni = dniNumbers + dniLetter
+                        if (newDni.length <= 9) {
+                            onNombreChange(newDni)
+                        }
+                    }
+                    isCorreo -> {
+                        onNombreChange(newValue)
+                    }
+                    else -> {
+                        if (newValue.all { !it.isDigit() }) {
+                            onNombreChange(newValue)
+                        }
+                    }
+                }
+            },
+            label = {
+                Text(
+                    enunciado,
                     style = TextStyle(color = Color.Black)
-                ) },
-                isError = nombre.isEmpty(),
-                textStyle = TextStyle(color = Color.Black),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Pink,
-                    unfocusedBorderColor = Pink,
-                    cursorColor = Pink
                 )
+            },
+            isError = nombre.isNotEmpty() && !isValid,
+            textStyle = TextStyle(color = Color.Black),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = if (nombre.isNotEmpty() && !isValid) Color.Red else Pink,
+                unfocusedBorderColor = if (nombre.isNotEmpty() && !isValid) Color.Red else Pink,
+                errorBorderColor = Color.Red,
+                cursorColor = Pink,
+            ),
+            singleLine = true,
+            maxLines = 1
+        )
+        if (nombre.isNotEmpty() && !isValid) {
+            Text(
+                text = when {
+                    isDni -> stringResource(R.string.dni)
+                    isCorreo -> stringResource(R.string.correo)
+                    else -> stringResource(R.string.nombre)
+                },
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 16.dp)
             )
+        }
     }
 }
 
@@ -66,7 +123,6 @@ fun PreguntaBoolean(enunciado: String, value: Boolean, onValueChange: (Boolean) 
         Box(
             modifier = Modifier
                 .width(360.dp)
-                .background(Color.White.copy(alpha = 0.6f), shape = RoundedCornerShape(12.dp))
                 .align(Alignment.CenterHorizontally)
                 .padding(16.dp)
 
@@ -96,7 +152,7 @@ fun PreguntaBoolean(enunciado: String, value: Boolean, onValueChange: (Boolean) 
                         )
                     ) {
                         Text(
-                            stringResource(R.string.si),
+                            if (!enunciado.contains("casa"))stringResource(R.string.si) else stringResource(R.string.casa),
                             color = if (value) Color.White else Color.Black,
                             style = TextStyle(color = Color.Black)
                         )
@@ -109,7 +165,7 @@ fun PreguntaBoolean(enunciado: String, value: Boolean, onValueChange: (Boolean) 
                         )
                     ) {
                         Text(
-                            stringResource(R.string.no),
+                           if(!enunciado.contains("casa"))stringResource(R.string.no) else stringResource(R.string.apartamento),
                             color = if (!value) Color.White else Color.Black,
                             style = TextStyle(color = Color.Black)
                         )
