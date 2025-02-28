@@ -226,7 +226,7 @@ fun PantallaCuestionario(navController: NavController) {
                                     isSubmitting = false
 
                                     if (success) {
-                                        Toast.makeText(context, "Usuario actualizado correctamente", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(context, "Datos del usuario recibidos", Toast.LENGTH_LONG).show()
                                     } else {
                                         Toast.makeText(context, "Error al actualizar el usuario", Toast.LENGTH_LONG).show()
                                     }
@@ -274,7 +274,7 @@ fun PantallaCuestionario(navController: NavController) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            "Guardando datos...",
+                            stringResource(R.string.recibiendo),
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
                         LinearProgressIndicator(

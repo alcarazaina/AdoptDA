@@ -16,6 +16,8 @@
     <string name="si">Sí</string>
     <string name="no">No</string>
     <string name="recibiendo">Estamos recibiendo los datos, mantengase a la espera</string>
+    <string name="recibido">Formulario recibido. En breve le comunicaremos nuestra decisión</string>
+    <string name="recibidosolicitud">Recibiendo solicitud de adopción, espere por favor</string>
     <string name="casa">Casa</string>
     <string name="apartamento">Apartamento</string>
     <string name="dni">El DNI debe tener 8 números seguidos de una letra</string>

@@ -33,6 +33,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -54,6 +55,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.adoptda.R
@@ -77,6 +79,7 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: String) {
     val context = LocalContext.current
     val baseDatos = remember { BaseDatos(context) }
     var usuario by remember { mutableStateOf<Usuario?>(null) }
+    var progress by remember { mutableStateOf(0f) }
 
     LaunchedEffect(key1 = true) {
         usuario = baseDatos.obtenerUsuario()
@@ -175,7 +178,7 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: String) {
                                             // Usar el ID con prefijo "g" para gatos
                                             baseDatos.agregarSolicitudAdopcion(gatoId)
                                             mostrarProgressBar = false
-                                            Toast.makeText(context, "Solicitud de adopción enviada", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, "Formulario recibido. En breve le comunicaremos nuestra decisión", Toast.LENGTH_SHORT).show()
                                             navController.popBackStack()
                                         }
                                     }
@@ -205,15 +208,32 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: String) {
                     )
                 }
                 if (mostrarProgressBar) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Black.copy(alpha = 0.5f))
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.Center),
-                            color = Pink
-                        )
+                    Dialog(onDismissRequest = {}) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            shape = RoundedCornerShape(16.dp),
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    stringResource(R.string.recibidosolicitud),
+                                    modifier = Modifier.padding(bottom = 16.dp)
+                                )
+                                LinearProgressIndicator(
+                                    progress = progress,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(8.dp),
+                                    color = Pink
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -240,5 +260,14 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: String) {
             }
         },
     )
+    LaunchedEffect(mostrarProgressBar) {
+        if (mostrarProgressBar) {
+            progress = 0f
+            while (progress < 1f) {
+                delay(30)
+                progress += 0.01f
+            }
+        }
+    }
 }
 
