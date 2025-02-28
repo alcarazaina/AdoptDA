@@ -210,19 +210,6 @@ class BaseDatos(private val context: Context) : SQLiteOpenHelper(context, DATABA
         return filas
     }
 
-    // Método para eliminar un usuario
-    fun eliminarUsuario(id: Int): Int {
-        val db = this.writableDatabase
-        val filas = db.delete(
-            UsuarioTabla.TABLE_NAME,
-            "${UsuarioTabla.COLUMN_ID} = ?",
-            arrayOf(id.toString())
-        )
-
-        db.close()
-        return filas
-    }
-
     fun obtenerUsuario(): Usuario {
         val db = this.readableDatabase
         val cursor = db.query(UsuarioTabla.TABLE_NAME, null, null, null, null, null, null)
@@ -247,10 +234,39 @@ class BaseDatos(private val context: Context) : SQLiteOpenHelper(context, DATABA
             }
         }
 
-        // If no user exists, create a default one and return it
-        val defaultUser = Usuario(0, "", "", "", "", false, false, 0, false, false, false, listOf())
-        insertarUsuario(defaultUser)
-        return defaultUser
+        // Si no existe un usuario, devolver null en lugar de crear uno nuevo
+        return Usuario(
+            idUsuario = 0,
+            nombre = "",
+            apellido = "",
+            dni = "",
+            correo = "",
+            masAnimales = false,
+            experienciaPrevia = false,
+            tiempoEnCasa = 0,
+            gastosVeterinario = false,
+            tiempoCalidad = false,
+            pisoOCasa = false,
+            animalesSolicitados = listOf()
+        )
+    }
+    fun crearUsuarioConAnimal(animalId: Int): Usuario {
+        val usuario = Usuario(
+            idUsuario = 0,
+            nombre = "",
+            apellido = "",
+            dni = "",
+            correo = "",
+            masAnimales = false,
+            experienciaPrevia = false,
+            tiempoEnCasa = 0,
+            gastosVeterinario = false,
+            tiempoCalidad = false,
+            pisoOCasa = false,
+            animalesSolicitados = listOf(animalId)
+        )
+        val id = insertarUsuario(usuario)
+        return usuario.copy(idUsuario = id.toInt())
     }
 
     // Replace the existing actualizarUsuario method with this one

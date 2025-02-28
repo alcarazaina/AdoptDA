@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -25,17 +23,15 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,20 +52,27 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.adoptda.R
 import com.example.adoptda.model.BaseDatos
-import com.example.adoptda.model.Gato
-import com.example.adoptda.model.GatoRepository
 import com.example.adoptda.model.PerroRepository
 import com.example.adoptda.model.Usuario
 import com.example.adoptda.view.ui.theme.Pink
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun PantallaAdopcionPerro(navController: NavController, perroId: Int, usuarioId: Usuario) {
+fun PantallaAdopcionPerro(navController: NavController, perroId: Int) {
     val perro = PerroRepository.getPerroById(perroId) ?: return
     var mostrarDialogoConfirmacion by remember { mutableStateOf(false) }
+    var mostrarProgressBar by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val baseDatos = remember { BaseDatos(context) }
+    var usuario by remember { mutableStateOf<Usuario?>(null) }
+
+    LaunchedEffect(key1 = true) {
+        usuario = baseDatos.obtenerUsuario()
+    }
 
     Scaffold(
         topBar = {
@@ -83,7 +86,7 @@ fun PantallaAdopcionPerro(navController: NavController, perroId: Int, usuarioId:
                     painter = painterResource(id = perro.imagen),
                     contentDescription = perro.nombre,
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.None
+                    contentScale = ContentScale.Crop
                 )
             }
         },
@@ -149,33 +152,37 @@ fun PantallaAdopcionPerro(navController: NavController, perroId: Int, usuarioId:
                 if (mostrarDialogoConfirmacion) {
                     AlertDialog(
                         onDismissRequest = { mostrarDialogoConfirmacion = false },
-                        title = { Text(if (usuarioId.nombre.isEmpty()) stringResource(R.string.iralcuestionario) else "Confirmar solicitud de adopción") },
+                        title = { Text(if (usuario?.nombre.isNullOrEmpty()) stringResource(R.string.iralcuestionario) else "Confirmar solicitud de adopción") },
                         confirmButton = {
                             Button(
                                 onClick = {
-                                    if (usuarioId.nombre.isEmpty()) {
-                                        navController.navigate("cuestionario/${usuarioId.idUsuario}")
+                                    if (usuario?.nombre.isNullOrEmpty()) {
+                                        // Crear nuevo usuario con el ID del perro
+                                        usuario = baseDatos.crearUsuarioConAnimal(perroId)
+                                        navController.navigate("cuestionario")
                                     } else {
-                                        // Agregar solicitud de adopción
-                                        baseDatos.agregarSolicitudAdopcion(usuarioId.idUsuario, )
-                                        // Mostrar mensaje de confirmación
-                                        Toast.makeText(context, "Solicitud de adopción enviada", Toast.LENGTH_SHORT).show()
-                                        navController.popBackStack()
+                                        mostrarProgressBar = true
+                                        CoroutineScope(Dispatchers.Main).launch {
+                                            delay(2000)
+                                            baseDatos.agregarSolicitudAdopcion(perroId)
+                                            mostrarProgressBar = false
+                                            Toast.makeText(context, "Solicitud de adopción enviada", Toast.LENGTH_SHORT).show()
+                                            navController.popBackStack()
+                                        }
                                     }
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Pink)
                             ) {
                                 Text(
-                                    if (usuarioId.nombre.isEmpty()) stringResource(R.string.aceptar) else "Enviar solicitud",
+                                    if (usuario?.nombre.isNullOrEmpty()) stringResource(R.string.aceptar) else "Enviar solicitud",
                                     style = TextStyle(color = Color.White)
                                 )
                             }
                         },
                         dismissButton = {
-                            Button(colors = ButtonDefaults.buttonColors(containerColor = Pink),
-                                onClick = {
-                                    mostrarDialogoConfirmacion = false
-                                }
+                            Button(
+                                colors = ButtonDefaults.buttonColors(containerColor = Pink),
+                                onClick = { mostrarDialogoConfirmacion = false }
                             ) {
                                 Text(
                                     stringResource(R.string.cancelar),
@@ -188,12 +195,25 @@ fun PantallaAdopcionPerro(navController: NavController, perroId: Int, usuarioId:
                         modifier = Modifier.padding(16.dp)
                     )
                 }
+                if (mostrarProgressBar) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.5f))
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center),
+                            color = Pink
+                        )
+                    }
+                }
             }
         },
-
         floatingActionButton = {
-            Row(modifier = Modifier.fillMaxWidth().padding(start = 32.dp),
-                horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(start = 32.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 FloatingActionButton(
                     onClick = { navController.popBackStack() },
                     containerColor = Pink,
@@ -206,9 +226,10 @@ fun PantallaAdopcionPerro(navController: NavController, perroId: Int, usuarioId:
                     containerColor = Pink,
                     contentColor = Color.White,
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Regresar")
+                    Icon(Icons.Default.Add, contentDescription = "Solicitar adopción")
                 }
             }
         },
     )
 }
+

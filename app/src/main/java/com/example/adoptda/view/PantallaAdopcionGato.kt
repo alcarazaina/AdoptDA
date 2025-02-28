@@ -76,10 +76,10 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
     var mostrarProgressBar by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val baseDatos = remember { BaseDatos(context) }
-    val usuario = remember { mutableStateOf<Usuario?>(null) }
+    var usuario by remember { mutableStateOf<Usuario?>(null) }
 
     LaunchedEffect(key1 = true) {
-        usuario.value = baseDatos.obtenerUsuario()
+        usuario = baseDatos.obtenerUsuario()
     }
 
     Scaffold(
@@ -160,17 +160,18 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
                 if (mostrarDialogoConfirmacion) {
                     AlertDialog(
                         onDismissRequest = { mostrarDialogoConfirmacion = false },
-                        title = { Text(if (usuario.value?.nombre.isNullOrEmpty()) stringResource(R.string.iralcuestionario) else "Confirmar solicitud de adopción") },
+                        title = { Text(if (usuario?.nombre.isNullOrEmpty()) stringResource(R.string.iralcuestionario) else "Confirmar solicitud de adopción") },
                         confirmButton = {
                             Button(
                                 onClick = {
-                                    if (usuario.value?.nombre.isNullOrEmpty()) {
+                                    if (usuario?.nombre.isNullOrEmpty()) {
+                                        // Crear nuevo usuario con el ID del gato
+                                        usuario = baseDatos.crearUsuarioConAnimal(gatoId)
                                         navController.navigate("cuestionario")
                                     } else {
                                         mostrarProgressBar = true
-                                        // Simular un proceso de envío
                                         CoroutineScope(Dispatchers.Main).launch {
-                                            delay(2000) // Simular un retraso de 2 segundos
+                                            delay(2000)
                                             baseDatos.agregarSolicitudAdopcion(gatoId)
                                             mostrarProgressBar = false
                                             Toast.makeText(context, "Solicitud de adopción enviada", Toast.LENGTH_SHORT).show()
@@ -181,7 +182,7 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
                                 colors = ButtonDefaults.buttonColors(containerColor = Pink)
                             ) {
                                 Text(
-                                    if (usuario.value?.nombre.isNullOrEmpty()) stringResource(R.string.aceptar) else "Enviar solicitud",
+                                    if (usuario?.nombre.isNullOrEmpty()) stringResource(R.string.aceptar) else "Enviar solicitud",
                                     style = TextStyle(color = Color.White)
                                 )
                             }

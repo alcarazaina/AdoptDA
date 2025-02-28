@@ -60,6 +60,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.adoptda.R
 import com.example.adoptda.model.BaseDatos
+import com.example.adoptda.model.GatoRepository
+import com.example.adoptda.model.PerroRepository
 import com.example.adoptda.model.PreguntaBoolean
 import com.example.adoptda.model.PreguntaTextField
 import com.example.adoptda.model.PreguntaTiempo
@@ -122,7 +124,7 @@ fun PerfilesUsuario(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     FloatingActionButton(
-                        onClick = { navController.popBackStack() },
+                        onClick = { navController.navigate("menu") },
                         containerColor = Pink,
                         contentColor = Color.White,
                     ) {
@@ -219,9 +221,14 @@ fun PerfilesUsuario(navController: NavController) {
 }
 
 fun obtenerNombreAnimal(id: Int): String {
-    // Implement this function to return the name of the animal based on its ID
-    // You'll need to have access to your GatoRepository and PerroRepository here
-    return "Animal $id"
+    val gato = GatoRepository.getGatoById(id)
+    val perro = PerroRepository.getPerroById(id)
+
+    return when {
+        gato != null -> "${gato.nombre} (Gato)"
+        perro != null -> "${perro.nombre} (Perro)"
+        else -> "Animal desconocido"
+    }
 }
 
 @Composable
@@ -246,3 +253,4 @@ fun DetalleUsuarioItem(etiqueta: String, valor: String) {
         )
     }
 }
+

@@ -3,7 +3,6 @@ package com.example.adoptda.model
 import com.example.adoptda.R
 
 object GatoRepository {
-    // borrar este comentario
     val gatos = listOf(
         Gato(1, "Simba", R.drawable.simba,1,"Macho","Gato joven, tranquilo, cariñoso y jugueton. \nSimba, un gato con ojos llenos de esperanza, pasó meses en las calles hasta que fue rescatado y llevado a un refugio. A pesar de su pasado difícil, es amoroso y juguetón, siempre en busca de caricias. Ahora, espera un hogar donde pueda ser amado y brindar alegría. ¿Serás tú quien le dé su final feliz?", "Madrid"),
         Gato(2, "Alaska", R.drawable.alaska,3,"Hembra","Alaska es una hermosa gata blanca de 3 años que enamora con su ternura y elegancia. Con un carácter tranquilo y cariñoso, disfruta de las caricias y la compañía. Fue rescatada en busca de una segunda oportunidad, despúes de haber sido abandonada por su anterior familia. Ahora espera un hogar donde pueda recibir el amor que merece. Si buscas una compañera fiel y amorosa, Alaska es la indicada. \nCompatible con otras mascotas y niños", "Valencia"),

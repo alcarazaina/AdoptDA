@@ -60,31 +60,17 @@ class MainActivity : ComponentActivity() {
                             arguments = listOf(navArgument("gatoId") { type = NavType.IntType })
                         ) { backStackEntry ->
                             val gatoId = backStackEntry.arguments?.getInt("gatoId") ?: 0
-                            val usuario = baseDatos.obtenerTodosUsuarios().firstOrNull()
-                            if (usuario != null) {
-                                PantallaAdopcionGato(navController, gatoId)
-                            }
+                            PantallaAdopcionGato(navController, gatoId)
                         }
                         composable(
                             "adoptaPerro/{perroId}",
                             arguments = listOf(navArgument("perroId") { type = NavType.IntType })
                         ) { backStackEntry ->
                             val perroId = backStackEntry.arguments?.getInt("perroId") ?: 0
-                            val usuario = baseDatos.obtenerTodosUsuarios().firstOrNull()
-                            if (usuario != null) {
-                                PantallaAdopcionPerro(navController, perroId, usuario)
-                            }
+                            PantallaAdopcionPerro(navController, perroId)
                         }
-
-                        composable("cuestionario/{usuarioId}") { backStackEntry ->
-                            val usuarioId =
-                                backStackEntry.arguments?.getString("usuarioId")?.toIntOrNull() ?: 0
-                            // Here you would typically fetch the Usuario object based on the ID
-                            // For this example, we'll create a dummy Usuario object
-                            val usuario = baseDatos.obtenerTodosUsuarios().firstOrNull()
-                            if (usuario != null) {
-                                PantallaCuestionario(navController)
-                            }
+                        composable("cuestionario") {
+                            PantallaCuestionario(navController)
                         }
                         composable("perfilesUsuario") { PerfilesUsuario(navController) }
                     }
@@ -93,3 +79,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
