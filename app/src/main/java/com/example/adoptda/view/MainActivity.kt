@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
                             val gatoId = backStackEntry.arguments?.getInt("gatoId") ?: 0
                             val usuario = baseDatos.obtenerTodosUsuarios().firstOrNull()
                             if (usuario != null) {
-                                PantallaAdopcionGato(navController, gatoId, usuario)
+                                PantallaAdopcionGato(navController, gatoId)
                             }
                         }
                         composable(
@@ -83,7 +83,7 @@ class MainActivity : ComponentActivity() {
                             // For this example, we'll create a dummy Usuario object
                             val usuario = baseDatos.obtenerTodosUsuarios().firstOrNull()
                             if (usuario != null) {
-                                PantallaCuestionario(navController, usuario)
+                                PantallaCuestionario(navController)
                             }
                         }
                         composable("perfilesUsuario") { PerfilesUsuario(navController) }

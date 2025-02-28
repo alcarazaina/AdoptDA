@@ -19,6 +19,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
@@ -72,16 +73,11 @@ fun PerfilesUsuario(navController: NavController) {
     val context = LocalContext.current
     val baseDatos = remember { BaseDatos(context) }
 
-    // Estado para la lista de usuarios
-    var usuarios by remember { mutableStateOf(listOf<Usuario>()) }
-    // Estado para mostrar diálogo de confirmación de eliminación
-    var usuarioAEliminar by remember { mutableStateOf<Usuario?>(null) }
-    // Estado para mostrar detalles de un usuario
-    var usuarioSeleccionado by remember { mutableStateOf<Usuario?>(null) }
+    var usuario by remember { mutableStateOf<Usuario?>(null) }
+    var mostrarDialogoConfirmacion by remember { mutableStateOf(false) }
 
-    // Efecto para cargar los usuarios de la base de datos
     LaunchedEffect(key1 = true) {
-        usuarios = baseDatos.obtenerTodosUsuarios()
+        usuario = baseDatos.obtenerUsuario()
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -108,7 +104,7 @@ fun PerfilesUsuario(navController: NavController) {
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
-                            "Perfiles de Usuario",
+                            "Perfil de Usuario",
                             fontSize = 30.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
@@ -121,182 +117,111 @@ fun PerfilesUsuario(navController: NavController) {
                 )
             },
             floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { navController.popBackStack() },
-                    containerColor = Pink,
-                    contentColor = Color.White,
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Regresar")
-                }
-            },
-            floatingActionButtonPosition = FabPosition.Start,
-            containerColor = Color.Transparent
-        ) { innerPadding ->
-            if (usuarios.isEmpty()) {
-                // Mostrar mensaje cuando no hay usuarios
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth(0.9f)
-                            .padding(16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.White
-                        )
+                    FloatingActionButton(
+                        onClick = { navController.popBackStack() },
+                        containerColor = Pink,
+                        contentColor = Color.White,
                     ) {
-                        Text(
-                            "No hay usuarios registrados",
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxWidth(),
-                            textAlign = TextAlign.Center,
-                            style = TextStyle(
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Medium
-                            )
-                        )
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Regresar")
+                    }
+                    FloatingActionButton(
+                        onClick = { navController.navigate("cuestionario") },
+                        containerColor = Pink,
+                        contentColor = Color.White,
+                    ) {
+                        Icon(Icons.Default.Edit, contentDescription = "Editar perfil")
                     }
                 }
-            } else {
-                // Mostrar lista de usuarios
+            },
+            floatingActionButtonPosition = FabPosition.Center,
+            containerColor = Color.Transparent
+        ) { innerPadding ->
+            usuario?.let { user ->
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
                         .padding(horizontal = 16.dp)
                 ) {
-                    items(usuarios) { usuario ->
+                    item {
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 8.dp),
                             colors = CardDefaults.cardColors(
                                 containerColor = Color.White
-                            ),
-                            onClick = {
-                                usuarioSeleccionado = usuario
-                            }
+                            )
                         ) {
-                            Row(
+                            Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(16.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
+                                    .padding(16.dp)
                             ) {
-                                Column(
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Text(
-                                        "${usuario.nombre} ${usuario.apellido}",
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 18.sp
-                                    )
-                                    Text(
-                                        "DNI: ${usuario.dni}",
-                                        fontSize = 14.sp,
-                                        color = Color.Gray
-                                    )
-                                    Text(
-                                        "Email: ${usuario.correo}",
-                                        fontSize = 14.sp,
-                                        color = Color.Gray
-                                    )
-                                }
-                                IconButton(
-                                    onClick = {
-                                        usuarioAEliminar = usuario
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Delete,
-                                        contentDescription = "Eliminar",
-                                        tint = Pink
-                                    )
-                                }
+                                DetalleUsuarioItem("Nombre", "${user.nombre} ${user.apellido}")
+                                DetalleUsuarioItem("DNI", user.dni)
+                                DetalleUsuarioItem("Correo", user.correo)
+                                DetalleUsuarioItem("Tiempo en casa", "${user.tiempoEnCasa} horas")
+                                DetalleUsuarioItem("Tiene más mascotas", if (user.masAnimales) "Sí" else "No")
+                                DetalleUsuarioItem("Ha tenido mascotas antes", if (user.experienciaPrevia) "Sí" else "No")
+                                DetalleUsuarioItem("Asume gastos veterinarios", if (user.gastosVeterinario) "Sí" else "No")
+                                DetalleUsuarioItem("Tiempo para cuidados", if (user.tiempoCalidad) "Sí" else "No")
+                                DetalleUsuarioItem("Tipo de vivienda", if (user.pisoOCasa) "Casa" else "Apartamento")
+                                DetalleUsuarioItem("Animales solicitados", user.animalesSolicitados.joinToString(", ") { obtenerNombreAnimal(it) })
                             }
                         }
                     }
+                    item {
+                        Button(
+                            onClick = { mostrarDialogoConfirmacion = true },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Pink)
+                        ) {
+                            Text("Resetear perfil")
+                        }
+                    }
                 }
+            } ?: run {
+                Text("No se pudo cargar el perfil del usuario", modifier = Modifier.padding(16.dp))
             }
         }
 
-        // Diálogo de confirmación para eliminar usuario
-        if (usuarioAEliminar != null) {
+        if (mostrarDialogoConfirmacion) {
             AlertDialog(
-                onDismissRequest = { usuarioAEliminar = null },
-                title = { Text("Confirmar eliminación") },
-                text = { Text("¿Estás seguro de que deseas eliminar a ${usuarioAEliminar?.nombre} ${usuarioAEliminar?.apellido}?") },
+                onDismissRequest = { mostrarDialogoConfirmacion = false },
+                title = { Text("Confirmar reseteo") },
+                text = { Text("¿Estás seguro de que deseas resetear tu perfil? Se borrarán todos tus datos.") },
                 confirmButton = {
                     Button(
                         onClick = {
-                            usuarioAEliminar?.let { usuario ->
-                                baseDatos.eliminarUsuario(usuario.idUsuario)
-                                // Actualizar la lista de usuarios
-                                usuarios = baseDatos.obtenerTodosUsuarios()
-                                usuarioAEliminar = null
-                            }
+                            baseDatos.resetearUsuario()
+                            usuario = baseDatos.obtenerUsuario()
+                            mostrarDialogoConfirmacion = false
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Pink)
                     ) {
-                        Text("Eliminar")
+                        Text("Resetear")
                     }
                 },
                 dismissButton = {
-                    Button(
-                        onClick = { usuarioAEliminar = null }
-                    ) {
+                    Button(onClick = { mostrarDialogoConfirmacion = false }) {
                         Text("Cancelar")
                     }
                 }
             )
         }
-
-        // Diálogo con detalles completos del usuario
-        if (usuarioSeleccionado != null) {
-            AlertDialog(
-                onDismissRequest = { usuarioSeleccionado = null },
-                title = {
-                    Text(
-                        "Detalles del usuario",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
-                },
-                text = {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        DetalleUsuarioItem("Nombre", "${usuarioSeleccionado?.nombre} ${usuarioSeleccionado?.apellido}")
-                        DetalleUsuarioItem("DNI", usuarioSeleccionado?.dni ?: "")
-                        DetalleUsuarioItem("Correo", usuarioSeleccionado?.correo ?: "")
-                        DetalleUsuarioItem("Tiempo en casa", "${usuarioSeleccionado?.tiempoEnCasa} horas")
-                        DetalleUsuarioItem("Tiene más mascotas", if (usuarioSeleccionado?.masAnimales == true) "Sí" else "No")
-                        DetalleUsuarioItem("Ha tenido mascotas antes", if (usuarioSeleccionado?.experienciaPrevia == true) "Sí" else "No")
-                        DetalleUsuarioItem("Asume gastos veterinarios", if (usuarioSeleccionado?.gastosVeterinario == true) "Sí" else "No")
-                        DetalleUsuarioItem("Tiempo para cuidados", if (usuarioSeleccionado?.tiempoCalidad == true) "Sí" else "No")
-                        DetalleUsuarioItem("Tipo de vivienda", if (usuarioSeleccionado?.pisoOCasa == true) "Casa" else "Apartamento")
-                        DetalleUsuarioItem("Animales solicitados", usuarioSeleccionado?.animalesSolicitados?.joinToString(", ") ?: "Ninguno")
-                    }
-                },
-                confirmButton = {
-                    Button(
-                        onClick = { usuarioSeleccionado = null },
-                        colors = ButtonDefaults.buttonColors(containerColor = Pink)
-                    ) {
-                        Text("Cerrar")
-                    }
-                }
-            )
-        }
     }
+}
+
+fun obtenerNombreAnimal(id: Int): String {
+    // Implement this function to return the name of the animal based on its ID
+    // You'll need to have access to your GatoRepository and PerroRepository here
+    return "Animal $id"
 }
 
 @Composable

@@ -31,17 +31,25 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
-    var nombre by remember { mutableStateOf(usuario.nombre) }
-    var apellido by remember { mutableStateOf(usuario.apellido) }
-    var dni by remember { mutableStateOf(usuario.dni) }
-    var correo by remember { mutableStateOf(usuario.correo) }
-    var tiempoEnCasa by remember { mutableStateOf(usuario.tiempoEnCasa.toString()) }
-    var tieneMasAnimales by remember { mutableStateOf(usuario.experienciaPrevia) }
-    var haTenidoMasAnimales by remember { mutableStateOf(usuario.masAnimales) }
-    var asumeGastosVeterinarios by remember { mutableStateOf(usuario.gastosVeterinario) }
-    var tiempoCalidad by remember { mutableStateOf(usuario.tiempoCalidad) }
-    var pisoOCasa by remember { mutableStateOf(usuario.pisoOCasa) }
+fun PantallaCuestionario(navController: NavController) {
+    val context = LocalContext.current
+    val baseDatos = remember { BaseDatos(context) }
+    var usuario by remember { mutableStateOf<Usuario?>(null) }
+
+    LaunchedEffect(key1 = true) {
+        usuario = baseDatos.obtenerUsuario()
+    }
+
+    var nombre by remember { mutableStateOf("") }
+    var apellido by remember { mutableStateOf("") }
+    var dni by remember { mutableStateOf("") }
+    var correo by remember { mutableStateOf("") }
+    var tiempoEnCasa by remember { mutableStateOf("") }
+    var tieneMasAnimales by remember { mutableStateOf(false) }
+    var haTenidoMasAnimales by remember { mutableStateOf(false) }
+    var asumeGastosVeterinarios by remember { mutableStateOf(false) }
+    var tiempoCalidad by remember { mutableStateOf(false) }
+    var pisoOCasa by remember { mutableStateOf(false) }
 
     var isNombreValid by remember { mutableStateOf(false) }
     var isApellidoValid by remember { mutableStateOf(false) }
@@ -51,14 +59,31 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
     var isSubmitting by remember { mutableStateOf(false) }
     var progress by remember { mutableStateOf(0f) }
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-
-    // Instanciamos la base de datos
-    val baseDatos = remember { BaseDatos(context) }
 
     val backgroundImage = ImageBitmap.imageResource(id = R.drawable.fondo)
 
     val isFormValid = isNombreValid && isApellidoValid && isDniValid && isCorreoValid
+
+    LaunchedEffect(usuario) {
+        usuario?.let { user ->
+            nombre = user.nombre
+            apellido = user.apellido
+            dni = user.dni
+            correo = user.correo
+            tiempoEnCasa = user.tiempoEnCasa.toString()
+            tieneMasAnimales = user.masAnimales
+            haTenidoMasAnimales = user.experienciaPrevia
+            asumeGastosVeterinarios = user.gastosVeterinario
+            tiempoCalidad = user.tiempoCalidad
+            pisoOCasa = user.pisoOCasa
+
+            // Set initial validation states
+            isNombreValid = user.nombre.isNotBlank()
+            isApellidoValid = user.apellido.isNotBlank()
+            isDniValid = user.dni.isNotBlank()
+            isCorreoValid = user.correo.isNotBlank()
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         // Background
@@ -169,7 +194,7 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
                         Button(
                             onClick = {
                                 isSubmitting = true
-                                val updatedUsuario = usuario.copy(
+                                val updatedUsuario = usuario?.copy(
                                     nombre = nombre,
                                     apellido = apellido,
                                     dni = dni,
@@ -180,18 +205,30 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
                                     gastosVeterinario = asumeGastosVeterinarios,
                                     tiempoCalidad = tiempoCalidad,
                                     pisoOCasa = pisoOCasa
+                                ) ?: Usuario(
+                                    idUsuario = 0,
+                                    nombre = nombre,
+                                    apellido = apellido,
+                                    dni = dni,
+                                    correo = correo,
+                                    tiempoEnCasa = tiempoEnCasa.toIntOrNull() ?: 0,
+                                    masAnimales = tieneMasAnimales,
+                                    experienciaPrevia = haTenidoMasAnimales,
+                                    gastosVeterinario = asumeGastosVeterinarios,
+                                    tiempoCalidad = tiempoCalidad,
+                                    pisoOCasa = pisoOCasa,
+                                    animalesSolicitados = listOf()
                                 )
-                                println("Updated Usuario: $updatedUsuario")
                                 scope.launch {
-                                    // Guardar usuario en la base de datos
-                                    val id = baseDatos.insertarUsuario(updatedUsuario)
+                                    // Actualizar usuario en la base de datos
+                                    val success = baseDatos.actualizarUsuarioCompleto(updatedUsuario)
                                     delay(2000)
                                     isSubmitting = false
 
-                                    if (id != -1L) {
-                                        Toast.makeText(context, "Usuario guardado correctamente. ID: $id", Toast.LENGTH_LONG).show()
+                                    if (success) {
+                                        Toast.makeText(context, "Usuario actualizado correctamente", Toast.LENGTH_LONG).show()
                                     } else {
-                                        Toast.makeText(context, "Error al guardar el usuario. Puede que el DNI o el correo ya existan.", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(context, "Error al actualizar el usuario", Toast.LENGTH_LONG).show()
                                     }
 
                                     delay(1000)
@@ -263,4 +300,3 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
         }
     }
 }
-

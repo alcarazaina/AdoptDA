@@ -28,6 +28,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -36,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,15 +62,25 @@ import com.example.adoptda.model.Gato
 import com.example.adoptda.model.GatoRepository
 import com.example.adoptda.model.Usuario
 import com.example.adoptda.view.ui.theme.Pink
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun PantallaAdopcionGato(navController: NavController, gatoId: Int, usuarioId: Usuario) {
+fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
     val gato = GatoRepository.getGatoById(gatoId) ?: return
     var mostrarDialogoConfirmacion by remember { mutableStateOf(false) }
+    var mostrarProgressBar by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val baseDatos = remember { BaseDatos(context) }
+    val usuario = remember { mutableStateOf<Usuario?>(null) }
+
+    LaunchedEffect(key1 = true) {
+        usuario.value = baseDatos.obtenerUsuario()
+    }
 
     Scaffold(
         topBar = {
@@ -82,7 +94,7 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int, usuarioId: U
                     painter = painterResource(id = gato.imagen),
                     contentDescription = gato.nombre,
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.None
+                    contentScale = ContentScale.Crop
                 )
             }
         },
@@ -148,33 +160,36 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int, usuarioId: U
                 if (mostrarDialogoConfirmacion) {
                     AlertDialog(
                         onDismissRequest = { mostrarDialogoConfirmacion = false },
-                        title = { Text(if (usuarioId.nombre.isEmpty()) stringResource(R.string.iralcuestionario) else "Confirmar solicitud de adopción") },
+                        title = { Text(if (usuario.value?.nombre.isNullOrEmpty()) stringResource(R.string.iralcuestionario) else "Confirmar solicitud de adopción") },
                         confirmButton = {
                             Button(
                                 onClick = {
-                                    if (usuarioId.nombre.isEmpty()) {
-                                        navController.navigate("cuestionario/${usuarioId.idUsuario}")
+                                    if (usuario.value?.nombre.isNullOrEmpty()) {
+                                        navController.navigate("cuestionario")
                                     } else {
-                                        // Agregar solicitud de adopción
-                                        baseDatos.agregarSolicitudAdopcion(usuarioId.idUsuario, gatoId)
-                                        // Mostrar mensaje de confirmación
-                                        Toast.makeText(context, "Solicitud de adopción enviada", Toast.LENGTH_SHORT).show()
-                                        navController.popBackStack()
+                                        mostrarProgressBar = true
+                                        // Simular un proceso de envío
+                                        CoroutineScope(Dispatchers.Main).launch {
+                                            delay(2000) // Simular un retraso de 2 segundos
+                                            baseDatos.agregarSolicitudAdopcion(gatoId)
+                                            mostrarProgressBar = false
+                                            Toast.makeText(context, "Solicitud de adopción enviada", Toast.LENGTH_SHORT).show()
+                                            navController.popBackStack()
+                                        }
                                     }
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Pink)
                             ) {
                                 Text(
-                                    if (usuarioId.nombre.isEmpty()) stringResource(R.string.aceptar) else "Enviar solicitud",
+                                    if (usuario.value?.nombre.isNullOrEmpty()) stringResource(R.string.aceptar) else "Enviar solicitud",
                                     style = TextStyle(color = Color.White)
                                 )
                             }
                         },
                         dismissButton = {
-                            Button(colors = ButtonDefaults.buttonColors(containerColor = Pink),
-                                onClick = {
-                                    mostrarDialogoConfirmacion = false
-                                }
+                            Button(
+                                colors = ButtonDefaults.buttonColors(containerColor = Pink),
+                                onClick = { mostrarDialogoConfirmacion = false }
                             ) {
                                 Text(
                                     stringResource(R.string.cancelar),
@@ -187,11 +202,25 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int, usuarioId: U
                         modifier = Modifier.padding(16.dp)
                     )
                 }
+                if (mostrarProgressBar) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.5f))
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center),
+                            color = Pink
+                        )
+                    }
+                }
             }
         },
         floatingActionButton = {
-            Row(modifier = Modifier.fillMaxWidth().padding(start = 32.dp),
-                horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(start = 32.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 FloatingActionButton(
                     onClick = { navController.popBackStack() },
                     containerColor = Pink,
@@ -204,9 +233,10 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int, usuarioId: U
                     containerColor = Pink,
                     contentColor = Color.White,
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Regresar")
+                    Icon(Icons.Default.Add, contentDescription = "Solicitar adopción")
                 }
             }
         },
     )
 }
+

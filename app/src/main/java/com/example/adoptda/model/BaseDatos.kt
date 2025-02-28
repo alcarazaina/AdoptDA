@@ -27,24 +27,27 @@ class BaseDatos(private val context: Context) : SQLiteOpenHelper(context, DATABA
 
     override fun onCreate(db: SQLiteDatabase?) {
         // Creamos la tabla usuarios
-        val createTableSQL = """
-            CREATE TABLE ${UsuarioTabla.TABLE_NAME} (
-                ${UsuarioTabla.COLUMN_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-                ${UsuarioTabla.COLUMN_NOMBRE} TEXT NOT NULL,
-                ${UsuarioTabla.COLUMN_APELLIDO} TEXT NOT NULL,
-                ${UsuarioTabla.COLUMN_DNI} TEXT NOT NULL UNIQUE,
-                ${UsuarioTabla.COLUMN_CORREO} TEXT NOT NULL UNIQUE,
-                ${UsuarioTabla.COLUMN_MAS_ANIMALES} INTEGER NOT NULL,
-                ${UsuarioTabla.COLUMN_EXPERIENCIA_PREVIA} INTEGER NOT NULL,
-                ${UsuarioTabla.COLUMN_TIEMPO_EN_CASA} INTEGER NOT NULL,
-                ${UsuarioTabla.COLUMN_GASTOS_VETERINARIO} INTEGER NOT NULL,
-                ${UsuarioTabla.COLUMN_TIEMPO_CALIDAD} INTEGER NOT NULL,
-                ${UsuarioTabla.COLUMN_PISO_O_CASA} INTEGER NOT NULL,
-                ${UsuarioTabla.COLUMN_ANIMALES_SOLICITADOS} TEXT
-            )
-        """.trimIndent()
+        db?.execSQL(CREATE_TABLE_SQL)
 
-        db?.execSQL(createTableSQL)
+        // Insert a default user
+        insertarUsuarioDefault(db)
+    }
+
+    private fun insertarUsuarioDefault(db: SQLiteDatabase?) {
+        val values = ContentValues().apply {
+            put(UsuarioTabla.COLUMN_NOMBRE, "")
+            put(UsuarioTabla.COLUMN_APELLIDO, "")
+            put(UsuarioTabla.COLUMN_DNI, "")
+            put(UsuarioTabla.COLUMN_CORREO, "")
+            put(UsuarioTabla.COLUMN_MAS_ANIMALES, 0)
+            put(UsuarioTabla.COLUMN_EXPERIENCIA_PREVIA, 0)
+            put(UsuarioTabla.COLUMN_TIEMPO_EN_CASA, 0)
+            put(UsuarioTabla.COLUMN_GASTOS_VETERINARIO, 0)
+            put(UsuarioTabla.COLUMN_TIEMPO_CALIDAD, 0)
+            put(UsuarioTabla.COLUMN_PISO_O_CASA, 0)
+            put(UsuarioTabla.COLUMN_ANIMALES_SOLICITADOS, "")
+        }
+        db?.insert(UsuarioTabla.TABLE_NAME, null, values)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -76,6 +79,7 @@ class BaseDatos(private val context: Context) : SQLiteOpenHelper(context, DATABA
         return id
     }
 
+
     // Método para obtener todos los usuarios
     fun obtenerTodosUsuarios(): List<Usuario> {
         val listaUsuarios = mutableListOf<Usuario>()
@@ -97,7 +101,13 @@ class BaseDatos(private val context: Context) : SQLiteOpenHelper(context, DATABA
                 val tiempoCalidad = cursor.getInt(cursor.getColumnIndexOrThrow(UsuarioTabla.COLUMN_TIEMPO_CALIDAD)) == 1
                 val pisoOCasa = cursor.getInt(cursor.getColumnIndexOrThrow(UsuarioTabla.COLUMN_PISO_O_CASA)) == 1
                 val animalesSolicitadosString = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioTabla.COLUMN_ANIMALES_SOLICITADOS))
-                val animalesSolicitados = animalesSolicitadosString?.split(",")?.map { it.toInt() } ?: listOf()
+
+                // Aquí está la corrección: verificamos si la cadena está vacía o es nula
+                val animalesSolicitados = if (animalesSolicitadosString.isNullOrEmpty()) {
+                    listOf()
+                } else {
+                    animalesSolicitadosString.split(",").filter { it.isNotEmpty() }.map { it.toInt() }
+                }
 
                 val usuario = Usuario(
                     idUsuario = id,
@@ -143,7 +153,13 @@ class BaseDatos(private val context: Context) : SQLiteOpenHelper(context, DATABA
             val tiempoCalidad = cursor.getInt(cursor.getColumnIndexOrThrow(UsuarioTabla.COLUMN_TIEMPO_CALIDAD)) == 1
             val pisoOCasa = cursor.getInt(cursor.getColumnIndexOrThrow(UsuarioTabla.COLUMN_PISO_O_CASA)) == 1
             val animalesSolicitadosString = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioTabla.COLUMN_ANIMALES_SOLICITADOS))
-            val animalesSolicitados = animalesSolicitadosString?.split(",")?.map { it.toInt() } ?: listOf()
+
+            // Aplicamos la misma corrección aquí también
+            val animalesSolicitados = if (animalesSolicitadosString.isNullOrEmpty()) {
+                listOf()
+            } else {
+                animalesSolicitadosString.split(",").filter { it.isNotEmpty() }.map { it.toInt() }
+            }
 
             usuario = Usuario(
                 idUsuario = id,
@@ -207,16 +223,93 @@ class BaseDatos(private val context: Context) : SQLiteOpenHelper(context, DATABA
         return filas
     }
 
-    fun agregarSolicitudAdopcion(usuarioId: Int, animalId: Int): Boolean {
-        val usuario = obtenerUsuarioPorId(usuarioId) ?: return false
+    fun obtenerUsuario(): Usuario {
+        val db = this.readableDatabase
+        val cursor = db.query(UsuarioTabla.TABLE_NAME, null, null, null, null, null, null)
+
+        cursor.use {
+            if (it.moveToFirst()) {
+                return Usuario(
+                    idUsuario = it.getInt(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_ID)),
+                    nombre = it.getString(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_NOMBRE)),
+                    apellido = it.getString(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_APELLIDO)),
+                    dni = it.getString(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_DNI)),
+                    correo = it.getString(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_CORREO)),
+                    masAnimales = it.getInt(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_MAS_ANIMALES)) == 1,
+                    experienciaPrevia = it.getInt(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_EXPERIENCIA_PREVIA)) == 1,
+                    tiempoEnCasa = it.getInt(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_TIEMPO_EN_CASA)),
+                    gastosVeterinario = it.getInt(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_GASTOS_VETERINARIO)) == 1,
+                    tiempoCalidad = it.getInt(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_TIEMPO_CALIDAD)) == 1,
+                    pisoOCasa = it.getInt(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_PISO_O_CASA)) == 1,
+                    animalesSolicitados = it.getString(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_ANIMALES_SOLICITADOS))
+                        .split(",").filter { it.isNotEmpty() }.map { it.toInt() }
+                )
+            }
+        }
+
+        // If no user exists, create a default one and return it
+        val defaultUser = Usuario(0, "", "", "", "", false, false, 0, false, false, false, listOf())
+        insertarUsuario(defaultUser)
+        return defaultUser
+    }
+
+    // Replace the existing actualizarUsuario method with this one
+    fun actualizarUsuarioCompleto(usuario: Usuario): Boolean {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put(UsuarioTabla.COLUMN_NOMBRE, usuario.nombre)
+            put(UsuarioTabla.COLUMN_APELLIDO, usuario.apellido)
+            put(UsuarioTabla.COLUMN_DNI, usuario.dni)
+            put(UsuarioTabla.COLUMN_CORREO, usuario.correo)
+            put(UsuarioTabla.COLUMN_MAS_ANIMALES, if (usuario.masAnimales) 1 else 0)
+            put(UsuarioTabla.COLUMN_EXPERIENCIA_PREVIA, if (usuario.experienciaPrevia) 1 else 0)
+            put(UsuarioTabla.COLUMN_TIEMPO_EN_CASA, usuario.tiempoEnCasa)
+            put(UsuarioTabla.COLUMN_GASTOS_VETERINARIO, if (usuario.gastosVeterinario) 1 else 0)
+            put(UsuarioTabla.COLUMN_TIEMPO_CALIDAD, if (usuario.tiempoCalidad) 1 else 0)
+            put(UsuarioTabla.COLUMN_PISO_O_CASA, if (usuario.pisoOCasa) 1 else 0)
+            put(UsuarioTabla.COLUMN_ANIMALES_SOLICITADOS, usuario.animalesSolicitados.joinToString(","))
+        }
+
+        val rowsAffected = db.update(UsuarioTabla.TABLE_NAME, values, null, null)
+        db.close()
+        return rowsAffected > 0
+    }
+
+    fun resetearUsuario() {
+        val db = this.writableDatabase
+        db.delete(UsuarioTabla.TABLE_NAME, null, null)
+        insertarUsuarioDefault(db)
+        db.close()
+    }
+
+    // Update the agregarSolicitudAdopcion method to use actualizarUsuarioCompleto
+    fun agregarSolicitudAdopcion(animalId: Int): Boolean {
+        val usuario = obtenerUsuario()
         val nuevaListaSolicitudes = usuario.animalesSolicitados + animalId
         val usuarioActualizado = usuario.copy(animalesSolicitados = nuevaListaSolicitudes)
-        return actualizarUsuario(usuarioActualizado) > 0
+        return actualizarUsuarioCompleto(usuarioActualizado)
     }
 
     companion object {
-        private const val DATABASE_NAME = "usuarios.db"
+        private const val DATABASE_NAME = "usuario.db"
         private const val DATABASE_VERSION = 1
+
+        private const val CREATE_TABLE_SQL = """
+            CREATE TABLE ${UsuarioTabla.TABLE_NAME} (
+                ${UsuarioTabla.COLUMN_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+                ${UsuarioTabla.COLUMN_NOMBRE} TEXT NOT NULL,
+                ${UsuarioTabla.COLUMN_APELLIDO} TEXT NOT NULL,
+                ${UsuarioTabla.COLUMN_DNI} TEXT NOT NULL,
+                ${UsuarioTabla.COLUMN_CORREO} TEXT NOT NULL,
+                ${UsuarioTabla.COLUMN_MAS_ANIMALES} INTEGER NOT NULL,
+                ${UsuarioTabla.COLUMN_EXPERIENCIA_PREVIA} INTEGER NOT NULL,
+                ${UsuarioTabla.COLUMN_TIEMPO_EN_CASA} INTEGER NOT NULL,
+                ${UsuarioTabla.COLUMN_GASTOS_VETERINARIO} INTEGER NOT NULL,
+                ${UsuarioTabla.COLUMN_TIEMPO_CALIDAD} INTEGER NOT NULL,
+                ${UsuarioTabla.COLUMN_PISO_O_CASA} INTEGER NOT NULL,
+                ${UsuarioTabla.COLUMN_ANIMALES_SOLICITADOS} TEXT
+            )
+        """
     }
 }
 

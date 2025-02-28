@@ -157,7 +157,7 @@ fun PantallaAdopcionPerro(navController: NavController, perroId: Int, usuarioId:
                                         navController.navigate("cuestionario/${usuarioId.idUsuario}")
                                     } else {
                                         // Agregar solicitud de adopción
-                                        baseDatos.agregarSolicitudAdopcion(usuarioId.idUsuario, perroId)
+                                        baseDatos.agregarSolicitudAdopcion(usuarioId.idUsuario, )
                                         // Mostrar mensaje de confirmación
                                         Toast.makeText(context, "Solicitud de adopción enviada", Toast.LENGTH_SHORT).show()
                                         navController.popBackStack()
