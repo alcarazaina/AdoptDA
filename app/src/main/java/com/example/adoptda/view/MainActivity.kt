@@ -57,16 +57,16 @@ class MainActivity : ComponentActivity() {
                         composable("gatos") { PantallaGatos(navController) }
                         composable(
                             "adoptaGato/{gatoId}",
-                            arguments = listOf(navArgument("gatoId") { type = NavType.IntType })
+                            arguments = listOf(navArgument("gatoId") { type = NavType.StringType })
                         ) { backStackEntry ->
-                            val gatoId = backStackEntry.arguments?.getInt("gatoId") ?: 0
+                            val gatoId = backStackEntry.arguments?.getString("gatoId") ?: ""
                             PantallaAdopcionGato(navController, gatoId)
                         }
                         composable(
                             "adoptaPerro/{perroId}",
-                            arguments = listOf(navArgument("perroId") { type = NavType.IntType })
+                            arguments = listOf(navArgument("perroId") { type = NavType.StringType })
                         ) { backStackEntry ->
-                            val perroId = backStackEntry.arguments?.getInt("perroId") ?: 0
+                            val perroId = backStackEntry.arguments?.getString("perroId") ?: ""
                             PantallaAdopcionPerro(navController, perroId)
                         }
                         composable("cuestionario") {

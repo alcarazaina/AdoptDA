@@ -79,7 +79,6 @@ class BaseDatos(private val context: Context) : SQLiteOpenHelper(context, DATABA
         return id
     }
 
-
     // Método para obtener todos los usuarios
     fun obtenerTodosUsuarios(): List<Usuario> {
         val listaUsuarios = mutableListOf<Usuario>()
@@ -106,7 +105,7 @@ class BaseDatos(private val context: Context) : SQLiteOpenHelper(context, DATABA
                 val animalesSolicitados = if (animalesSolicitadosString.isNullOrEmpty()) {
                     listOf()
                 } else {
-                    animalesSolicitadosString.split(",").filter { it.isNotEmpty() }.map { it.toInt() }
+                    animalesSolicitadosString.split(",").filter { it.isNotEmpty() }
                 }
 
                 val usuario = Usuario(
@@ -158,7 +157,7 @@ class BaseDatos(private val context: Context) : SQLiteOpenHelper(context, DATABA
             val animalesSolicitados = if (animalesSolicitadosString.isNullOrEmpty()) {
                 listOf()
             } else {
-                animalesSolicitadosString.split(",").filter { it.isNotEmpty() }.map { it.toInt() }
+                animalesSolicitadosString.split(",").filter { it.isNotEmpty() }
             }
 
             usuario = Usuario(
@@ -216,6 +215,15 @@ class BaseDatos(private val context: Context) : SQLiteOpenHelper(context, DATABA
 
         cursor.use {
             if (it.moveToFirst()) {
+                val animalesSolicitadosString = it.getString(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_ANIMALES_SOLICITADOS))
+
+                // Procesar la lista de animales solicitados
+                val animalesSolicitados = if (animalesSolicitadosString.isNullOrEmpty()) {
+                    listOf()
+                } else {
+                    animalesSolicitadosString.split(",").filter { id -> id.isNotEmpty() }
+                }
+
                 return Usuario(
                     idUsuario = it.getInt(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_ID)),
                     nombre = it.getString(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_NOMBRE)),
@@ -228,13 +236,12 @@ class BaseDatos(private val context: Context) : SQLiteOpenHelper(context, DATABA
                     gastosVeterinario = it.getInt(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_GASTOS_VETERINARIO)) == 1,
                     tiempoCalidad = it.getInt(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_TIEMPO_CALIDAD)) == 1,
                     pisoOCasa = it.getInt(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_PISO_O_CASA)) == 1,
-                    animalesSolicitados = it.getString(it.getColumnIndexOrThrow(UsuarioTabla.COLUMN_ANIMALES_SOLICITADOS))
-                        .split(",").filter { it.isNotEmpty() }.map { it.toInt() }
+                    animalesSolicitados = animalesSolicitados
                 )
             }
         }
 
-        // Si no existe un usuario, devolver null en lugar de crear uno nuevo
+        // Si no existe un usuario, devolver uno vacío
         return Usuario(
             idUsuario = 0,
             nombre = "",
@@ -250,7 +257,9 @@ class BaseDatos(private val context: Context) : SQLiteOpenHelper(context, DATABA
             animalesSolicitados = listOf()
         )
     }
-    fun crearUsuarioConAnimal(animalId: Int): Usuario {
+
+    // Actualizar el método crearUsuarioConAnimal para usar el nuevo formato
+    fun crearUsuarioConAnimal(animalId: String): Usuario {
         val usuario = Usuario(
             idUsuario = 0,
             nombre = "",
@@ -269,7 +278,23 @@ class BaseDatos(private val context: Context) : SQLiteOpenHelper(context, DATABA
         return usuario.copy(idUsuario = id.toInt())
     }
 
-    // Replace the existing actualizarUsuario method with this one
+    // Método de compatibilidad para IDs numéricos
+    fun crearUsuarioConAnimal(animalId: Int): Usuario {
+        // Determinar si es un gato o un perro
+        val gato = GatoRepository.getGatoById(animalId)
+        val perro = PerroRepository.getPerroById(animalId)
+
+        // Crear un ID con prefijo: "g" para gatos, "p" para perros
+        val idConPrefijo = when {
+            gato != null -> "g$animalId"
+            perro != null -> "p$animalId"
+            else -> animalId.toString() // Caso por defecto
+        }
+
+        return crearUsuarioConAnimal(idConPrefijo)
+    }
+
+    // Actualizar el método actualizarUsuarioCompleto
     fun actualizarUsuarioCompleto(usuario: Usuario): Boolean {
         val db = this.writableDatabase
         val values = ContentValues().apply {
@@ -298,12 +323,28 @@ class BaseDatos(private val context: Context) : SQLiteOpenHelper(context, DATABA
         db.close()
     }
 
-    // Update the agregarSolicitudAdopcion method to use actualizarUsuarioCompleto
-    fun agregarSolicitudAdopcion(animalId: Int): Boolean {
+    // Actualizar el método agregarSolicitudAdopcion para usar strings directamente
+    fun agregarSolicitudAdopcion(animalId: String): Boolean {
         val usuario = obtenerUsuario()
         val nuevaListaSolicitudes = usuario.animalesSolicitados + animalId
         val usuarioActualizado = usuario.copy(animalesSolicitados = nuevaListaSolicitudes)
         return actualizarUsuarioCompleto(usuarioActualizado)
+    }
+
+    // Método de compatibilidad para IDs numéricos
+    fun agregarSolicitudAdopcion(animalId: Int): Boolean {
+        // Determinar si es un gato o un perro
+        val gato = GatoRepository.getGatoById(animalId)
+        val perro = PerroRepository.getPerroById(animalId)
+
+        // Crear un ID con prefijo: "g" para gatos, "p" para perros
+        val idConPrefijo = when {
+            gato != null -> "g$animalId"
+            perro != null -> "p$animalId"
+            else -> animalId.toString() // Caso por defecto
+        }
+
+        return agregarSolicitudAdopcion(idConPrefijo)
     }
 
     companion object {

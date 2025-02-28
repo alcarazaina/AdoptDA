@@ -120,7 +120,7 @@ fun PerfilesUsuario(navController: NavController) {
             },
             floatingActionButton = {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(start = 32.dp, end = 32.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     FloatingActionButton(
@@ -220,15 +220,37 @@ fun PerfilesUsuario(navController: NavController) {
     }
 }
 
-fun obtenerNombreAnimal(id: Int): String {
-    val gato = GatoRepository.getGatoById(id)
-    val perro = PerroRepository.getPerroById(id)
+// Actualizar la función obtenerNombreAnimal para interpretar correctamente los IDs con prefijo
+fun obtenerNombreAnimal(id: Any): String {
+    when (id) {
+        is String -> {
+            // Si el ID es un string, verificar el prefijo
+            if (id.startsWith("g")) {
+                // Es un gato
+                val gatoId = id.substring(1).toIntOrNull() ?: return "Animal desconocido"
+                val gato = GatoRepository.getGatoById(gatoId)
+                return if (gato != null) "${gato.nombre} (Gato)" else "Gato desconocido"
+            } else if (id.startsWith("p")) {
+                // Es un perro
+                val perroId = id.substring(1).toIntOrNull() ?: return "Animal desconocido"
+                val perro = PerroRepository.getPerroById(perroId)
+                return if (perro != null) "${perro.nombre} (Perro)" else "Perro desconocido"
+            }
+        }
+        is Int -> {
+            // Para compatibilidad con datos antiguos
+            val gato = GatoRepository.getGatoById(id)
+            val perro = PerroRepository.getPerroById(id)
 
-    return when {
-        gato != null -> "${gato.nombre} (Gato)"
-        perro != null -> "${perro.nombre} (Perro)"
-        else -> "Animal desconocido"
+            return when {
+                gato != null -> "${gato.nombre} (Gato)"
+                perro != null -> "${perro.nombre} (Perro)"
+                else -> "Animal desconocido"
+            }
+        }
     }
+
+    return "Animal desconocido"
 }
 
 @Composable
@@ -249,7 +271,7 @@ fun DetalleUsuarioItem(etiqueta: String, valor: String) {
         )
         Divider(
             modifier = Modifier.padding(top = 4.dp),
-            color = Color.LightGray
+            color = Pink
         )
     }
 }

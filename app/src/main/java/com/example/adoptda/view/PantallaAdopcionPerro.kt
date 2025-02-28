@@ -62,7 +62,7 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun PantallaAdopcionPerro(navController: NavController, perroId: Int) {
+fun PantallaAdopcionPerro(navController: NavController, perroId: String) {
     val perro = PerroRepository.getPerroById(perroId) ?: return
     var mostrarDialogoConfirmacion by remember { mutableStateOf(false) }
     var mostrarProgressBar by remember { mutableStateOf(false) }
@@ -164,6 +164,7 @@ fun PantallaAdopcionPerro(navController: NavController, perroId: Int) {
                                         mostrarProgressBar = true
                                         CoroutineScope(Dispatchers.Main).launch {
                                             delay(2000)
+                                            // Usar el ID con prefijo "p" para perros
                                             baseDatos.agregarSolicitudAdopcion(perroId)
                                             mostrarProgressBar = false
                                             Toast.makeText(context, "Solicitud de adopción enviada", Toast.LENGTH_SHORT).show()

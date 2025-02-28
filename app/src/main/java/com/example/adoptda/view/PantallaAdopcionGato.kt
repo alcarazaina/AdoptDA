@@ -70,7 +70,7 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
+fun PantallaAdopcionGato(navController: NavController, gatoId: String) {
     val gato = GatoRepository.getGatoById(gatoId) ?: return
     var mostrarDialogoConfirmacion by remember { mutableStateOf(false) }
     var mostrarProgressBar by remember { mutableStateOf(false) }
@@ -172,6 +172,7 @@ fun PantallaAdopcionGato(navController: NavController, gatoId: Int) {
                                         mostrarProgressBar = true
                                         CoroutineScope(Dispatchers.Main).launch {
                                             delay(2000)
+                                            // Usar el ID con prefijo "g" para gatos
                                             baseDatos.agregarSolicitudAdopcion(gatoId)
                                             mostrarProgressBar = false
                                             Toast.makeText(context, "Solicitud de adopción enviada", Toast.LENGTH_SHORT).show()
