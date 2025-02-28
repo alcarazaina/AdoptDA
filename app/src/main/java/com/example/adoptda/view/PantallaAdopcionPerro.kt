@@ -1,6 +1,7 @@
 package com.example.adoptda.view
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -53,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.adoptda.R
+import com.example.adoptda.model.BaseDatos
 import com.example.adoptda.model.Gato
 import com.example.adoptda.model.GatoRepository
 import com.example.adoptda.model.PerroRepository
@@ -63,9 +66,10 @@ import com.example.adoptda.view.ui.theme.Pink
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun PantallaAdopcionPerro(navController: NavController, perroId: Int, usuarioId: Usuario) {
-
     val perro = PerroRepository.getPerroById(perroId) ?: return
     var mostrarDialogoConfirmacion by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val baseDatos = remember { BaseDatos(context) }
 
     Scaffold(
         topBar = {
@@ -145,14 +149,24 @@ fun PantallaAdopcionPerro(navController: NavController, perroId: Int, usuarioId:
                 if (mostrarDialogoConfirmacion) {
                     AlertDialog(
                         onDismissRequest = { mostrarDialogoConfirmacion = false },
-                        title = { Text(stringResource(R.string.iralcuestionario)) },
+                        title = { Text(if (usuarioId.nombre.isEmpty()) stringResource(R.string.iralcuestionario) else "Confirmar solicitud de adopción") },
                         confirmButton = {
                             Button(
-                                onClick = { navController.navigate("cuestionario/${usuarioId}") },
+                                onClick = {
+                                    if (usuarioId.nombre.isEmpty()) {
+                                        navController.navigate("cuestionario/${usuarioId.idUsuario}")
+                                    } else {
+                                        // Agregar solicitud de adopción
+                                        baseDatos.agregarSolicitudAdopcion(usuarioId.idUsuario, perroId)
+                                        // Mostrar mensaje de confirmación
+                                        Toast.makeText(context, "Solicitud de adopción enviada", Toast.LENGTH_SHORT).show()
+                                        navController.popBackStack()
+                                    }
+                                },
                                 colors = ButtonDefaults.buttonColors(containerColor = Pink)
                             ) {
                                 Text(
-                                    stringResource(R.string.aceptar),
+                                    if (usuarioId.nombre.isEmpty()) stringResource(R.string.aceptar) else "Enviar solicitud",
                                     style = TextStyle(color = Color.White)
                                 )
                             }

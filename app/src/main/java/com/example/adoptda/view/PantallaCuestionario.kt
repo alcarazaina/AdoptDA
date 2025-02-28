@@ -53,6 +53,9 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
+    // Instanciamos la base de datos
+    val baseDatos = remember { BaseDatos(context) }
+
     val backgroundImage = ImageBitmap.imageResource(id = R.drawable.fondo)
 
     val isFormValid = isNombreValid && isApellidoValid && isDniValid && isCorreoValid
@@ -180,11 +183,19 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
                                 )
                                 println("Updated Usuario: $updatedUsuario")
                                 scope.launch {
-                                    delay(3000)
-                                    isSubmitting = false
-                                    Toast.makeText(context, "Respuestas recibidas. En breve le comunicaremos nuestra decisión.", Toast.LENGTH_LONG).show()
+                                    // Guardar usuario en la base de datos
+                                    val id = baseDatos.insertarUsuario(updatedUsuario)
                                     delay(2000)
-                                    navController.popBackStack()
+                                    isSubmitting = false
+
+                                    if (id != -1L) {
+                                        Toast.makeText(context, "Usuario guardado correctamente. ID: $id", Toast.LENGTH_LONG).show()
+                                    } else {
+                                        Toast.makeText(context, "Error al guardar el usuario. Puede que el DNI o el correo ya existan.", Toast.LENGTH_LONG).show()
+                                    }
+
+                                    delay(1000)
+                                    navController.navigate("perfilesUsuario")
                                 }
                             },
                             modifier = Modifier
@@ -226,7 +237,7 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            stringResource(R.string.recibiendo),
+                            "Guardando datos...",
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
                         LinearProgressIndicator(
@@ -252,3 +263,4 @@ fun PantallaCuestionario(navController: NavController, usuario: Usuario) {
         }
     }
 }
+

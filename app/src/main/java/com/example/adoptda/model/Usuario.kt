@@ -11,6 +11,6 @@ data class Usuario(
     val tiempoEnCasa: Int,
     val gastosVeterinario: Boolean,
     val tiempoCalidad: Boolean,
-    val pisoOCasa: Boolean
-
+    val pisoOCasa: Boolean,
+    val animalesSolicitados: List<Int> = listOf()
 )
