@@ -232,7 +232,7 @@ fun PantallaCuestionario(navController: NavController) {
                                     }
 
                                     delay(1000)
-                                    navController.navigate("perfilesUsuario")
+                                    navController.popBackStack()
                                 }
                             },
                             modifier = Modifier
