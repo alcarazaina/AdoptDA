@@ -11,18 +11,18 @@ Este es un proyecto para gestionar adopciones de perros y gatos, permitiendo a l
 
 ## 🎮 Cómo usar la aplicación
 
--Abre la aplicación y elige si quieres adoptar un perro o un gato pulsando el botón correspondiente.
--Aparecerá una lista de mascotas disponibles en tarjetas con su información.
--Selecciona una mascota de la lista y pulsa el botón + para comenzar el proceso de adopción.
--Se te mostrará un cuestionario que debes completar para evaluar tu compatibilidad con la mascota.
--Una vez rellenado el cuestionario, pulsa nuevamente + para añadir la mascota a tu perfil de adopciones solicitadas.
--Puedes volver a la lista de mascotas y añadir más presionando el + en el perfil de cada animal que desees adoptar.
+- Abre la aplicación y elige si quieres adoptar un perro o un gato pulsando el botón correspondiente.
+- Aparecerá una lista de mascotas disponibles en tarjetas con su información.
+- Selecciona una mascota de la lista y pulsa el botón + para comenzar el proceso de adopción.
+- Se te mostrará un cuestionario que debes completar para evaluar tu compatibilidad con la mascota.
+- Una vez rellenado el cuestionario, pulsa nuevamente + para añadir la mascota a tu perfil de adopciones solicitadas.
+- Puedes volver a la lista de mascotas y añadir más presionando el + en el perfil de cada animal que desees adoptar.
 
 ## 🛠 Tecnologías utilizadas
--Lenguaje de programación: Kotlin
--Framework UI: Jetpack Compose
--Arquitectura: MVVM
--Base de datos: MySQLite (SQLiteOpenHelper)
+- Lenguaje de programación: Kotlin
+- Framework UI: Jetpack Compose
+- Arquitectura: MVVM
+- Base de datos: MySQLite (SQLiteOpenHelper)
 
 ## 👩🏼‍💻 Integrantes
 - Ainara (@alcarazaina)
