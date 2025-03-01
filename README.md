@@ -32,19 +32,22 @@ Este es un proyecto para gestionar adopciones de perros y gatos, permitiendo a l
 A continuación, se detallan los cambios realizados en el proyecto junto con las contribuciones de cada persona:
 
 📅 1 de Marzo de 2025
-
+```md
 - **@alcarazaina**: Arreglado que cuando rellenes el cuestionario no te lleve al perfil, sino a la pantalla anterior para que solicites la adopción de la mascota elegida.
+```
 
 📅 28 de Febrero de 2025
-
+```md
 - **@alcarazaina**: Hecho el `ProgressBar` de las pantallas `PantallaAdopcionGato.kt` y `PantallaAdopcionPerro.kt`, añadido los strings necesarios para las nuevas barras de progreso y la antigua.
 - **@juanda1612**: Funcionalidad completa, ya detecta si es gato o perro, cambiando simplemente las IDs.
 - **@juanda1612**: Cambios en el código para añadir gatos al usuario.
 - **@alcarazaina**: Solucionados problemas con la base de datos en la creación de usuarios.
+```
 
 📅 27 de Febrero de 2025
-
+```md
 - **@juanda1612**: Comienzo de la segunda entrega, implementada base de datos y creación de usuarios.
+```
 
 ### 📅 24 de Febrero de 2025
 ```md
