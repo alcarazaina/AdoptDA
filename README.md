@@ -6,8 +6,23 @@ Este es un proyecto para gestionar adopciones de perros y gatos, permitiendo a l
 - Listado de perros y gatos disponibles para adopción.
 - Pantallas detalladas para cada mascota con información relevante.
 - Cuestionario para evaluar la compatibilidad del adoptante con la mascota.
-- Gestión de usuarios y sus perfiles. (por añadir)
-- Base de datos para almacenar información relevante. (por añadir)
+- Gestión de usuarios y sus perfiles.
+- Base de datos para almacenar información relevante.
+
+## 🎮 Cómo usar la aplicación
+
+-Abre la aplicación y elige si quieres adoptar un perro o un gato pulsando el botón correspondiente.
+-Aparecerá una lista de mascotas disponibles en tarjetas con su información.
+-Selecciona una mascota de la lista y pulsa el botón + para comenzar el proceso de adopción.
+-Se te mostrará un cuestionario que debes completar para evaluar tu compatibilidad con la mascota.
+-Una vez rellenado el cuestionario, pulsa nuevamente + para añadir la mascota a tu perfil de adopciones solicitadas.
+-Puedes volver a la lista de mascotas y añadir más presionando el + en el perfil de cada animal que desees adoptar.
+
+## 🛠 Tecnologías utilizadas
+-Lenguaje de programación: Kotlin
+-Framework UI: Jetpack Compose
+-Arquitectura: MVVM
+-Base de datos: MySQLite (SQLiteOpenHelper)
 
 ## 👩🏼‍💻 Integrantes
 - Ainara (@alcarazaina)
@@ -15,6 +30,21 @@ Este es un proyecto para gestionar adopciones de perros y gatos, permitiendo a l
 
 ## 📜 Historial de Commits y Contribuciones
 A continuación, se detallan los cambios realizados en el proyecto junto con las contribuciones de cada persona:
+
+📅 1 de Marzo de 2025
+
+- **@alcarazaina**: Arreglado que cuando rellenes el cuestionario no te lleve al perfil, sino a la pantalla anterior para que solicites la adopción de la mascota elegida.
+
+📅 28 de Febrero de 2025
+
+- **@alcarazaina**: Hecho el `ProgressBar` de las pantallas `PantallaAdopcionGato.kt` y `PantallaAdopcionPerro.kt`, añadido los strings necesarios para las nuevas barras de progreso y la antigua.
+- **@juanda1612**: Funcionalidad completa, ya detecta si es gato o perro, cambiando simplemente las IDs.
+- **@juanda1612**: Cambios en el código para añadir gatos al usuario.
+- **@alcarazaina**: Solucionados problemas con la base de datos en la creación de usuarios.
+
+📅 27 de Febrero de 2025
+
+- **@juanda1612**: Comienzo de la segunda entrega, implementada base de datos y creación de usuarios.
 
 ### 📅 24 de Febrero de 2025
 ```md
@@ -87,3 +117,6 @@ A continuación, se detallan los cambios realizados en el proyecto junto con las
 - **@juanda1612**: Commit inicial con la estructura base del proyecto.
 ```
 
+## 💖 Agradecimientos
+
+Queremos agradecer a todos los que nos han apoyado con este proyecto. Esperamos que esta aplicación ayude a conectar muchas mascotas con hogares llenos de amor. 🏡🐾 ¡Gracias por tomarte el tiempo de conocer nuestra iniciativa y formar parte de ella! 🎉
