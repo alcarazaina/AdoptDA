@@ -10,7 +10,6 @@ Este es un proyecto para gestionar adopciones de perros y gatos, permitiendo a l
 - Base de datos para almacenar información relevante.
 
 ## 🎮 Cómo usar la aplicación
-
 - Abre la aplicación y elige si quieres adoptar un perro o un gato pulsando el botón correspondiente.
 - Aparecerá una lista de mascotas disponibles en tarjetas con su información.
 - Selecciona una mascota de la lista y pulsa el botón + para comenzar el proceso de adopción.
