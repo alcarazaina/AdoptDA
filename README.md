@@ -23,6 +23,18 @@ Este es un proyecto para gestionar adopciones de perros y gatos, permitiendo a l
 - Arquitectura: MVVM
 - Base de datos: MySQLite (SQLiteOpenHelper)
 
+## 🤖 Prompts para la IA
+A continuación, se presentan las preguntas utilizadas para guiar a la IA en la modificación del proyecto:
+
+1. **Necesito modificar unas cosas:** La app es de adopción de perros y gatos, te paso el código y te explico. Hay que modificar el `Main` para que se cree la base de datos al empezar la app y que se cree un usuario sin datos. Así podemos poner un usuario en `MainActivity` en la parte de `PantallaAdopcionGato/Perro`.
+
+2. **Quiero que para ir al cuestionario tengas que seleccionar un gato o un perro:** Si no hay usuario, se mostrará el cuestionario para completar la información del usuario. Si ya hay un usuario creado, directamente aparecerá un `ProgressBar` simulando el envío de la solicitud. En la sección de perfiles, aparecerán los animales a los que el usuario ha solicitado adopción (cogiendo la ID de los animales y almacenándolas en la base de datos).
+
+3. **No es necesario crear una tabla de solicitudes:** Añádelo a la clase `Usuario` y a la tabla de la base de datos para asignar la ID del gato/perro. Así se podrá extraer la información del animal directamente.
+
+---
+✍️ **Nota:** Estas modificaciones optimizarán el flujo de adopción y mejorarán la experiencia del usuario dentro de la aplicación.
+
 ## 👩🏼‍💻 Integrantes
 - Ainara (@alcarazaina)
 - Juan Daniel (@juanda1612)
